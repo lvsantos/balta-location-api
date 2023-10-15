@@ -1,4 +1,4 @@
-using Baltaio.Location.Api.Application.Commons;
+using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Infrastructure.Addresses;
 
 var builder = WebApplication.CreateBuilder(args);

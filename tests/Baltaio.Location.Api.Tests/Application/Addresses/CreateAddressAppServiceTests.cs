@@ -1,10 +1,10 @@
-﻿using Baltaio.Location.Api.Application.Commons;
-using Baltaio.Location.Api.Application.CreateAddress;
-using Baltaio.Location.Api.Domain.Locations;
+﻿using Baltaio.Location.Api.Application.Addresses.Commons;
+using Baltaio.Location.Api.Application.Addresses.CreateAddress;
+using Baltaio.Location.Api.Domain.Addresses;
 using FluentAssertions;
 using NSubstitute;
 
-namespace Baltaio.Location.Api.Tests.Application;
+namespace Baltaio.Location.Api.Tests.Application.Addresses;
 
 public class CreateAddressAppServiceTests
 {
@@ -21,7 +21,7 @@ public class CreateAddressAppServiceTests
     public async Task Should_ReturnErrorMessage_When_IbgeCodeDoesNotExist()
     {
         //Arrange
-        int ibgeCode = 42001010; 
+        int ibgeCode = 42001010;
         CreateAddressInput input = new(ibgeCode);
         _cityRepositoryMock
             .GetAsync(ibgeCode)
