@@ -1,5 +1,5 @@
-﻿using Baltaio.Location.Api.Application.Commons;
-using Baltaio.Location.Api.Domain.Locations;
+﻿using Baltaio.Location.Api.Application.Addresses.Commons;
+using Baltaio.Location.Api.Domain.Addresses;
 
 namespace Baltaio.Location.Api.Infrastructure.Addresses;
 

@@ -1,5 +1,6 @@
 using Baltaio.Location.Api.Application.Commons;
 using Baltaio.Location.Api.Application.Users.Commons;
+using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Infrastructure.Addresses;
 using Baltaio.Location.Api.Infrastructure.Users;
 

@@ -1,4 +1,4 @@
-﻿namespace Baltaio.Location.Api.Domain.Locations;
+﻿namespace Baltaio.Location.Api.Domain.Addresses;
 
 public sealed class Address
 {
