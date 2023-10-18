@@ -1,4 +1,4 @@
-﻿using Baltaio.Location.Api.Application.Users.Commons;
+﻿using Baltaio.Location.Api.Application.Users.Abstractions;
 using Baltaio.Location.Api.Domain.Users;
 
 namespace Baltaio.Location.Api.Application.Users.Register;

@@ -12,6 +12,11 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
     <PackageReference Include="NSubstitute" Version="5.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
   </ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Baltaio.Location.Api.Tests" />
+	</ItemGroup>
 
 </Project>

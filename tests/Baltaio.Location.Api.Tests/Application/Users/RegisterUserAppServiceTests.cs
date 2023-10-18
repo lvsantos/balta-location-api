@@ -1,4 +1,4 @@
-﻿using Baltaio.Location.Api.Application.Users.Commons;
+﻿using Baltaio.Location.Api.Application.Users.Abstractions;
 using Baltaio.Location.Api.Application.Users.Register;
 using Baltaio.Location.Api.Domain.Users;
 using FluentAssertions;
@@ -27,7 +27,7 @@ public class RegisterUserAppServiceTests
     [InlineData("")]
     [InlineData(null)]
     [Trait("Application", "Users")]
-    public async Task Should_ReturnValidationError_When_EmailIsInvalid(string email)
+    public async Task Should_ReturnValidationError_When_EmailIsInvalid(string? email)
     {
         // Arrange
         string password = "12345678";
@@ -119,6 +119,6 @@ public class RegisterUserAppServiceTests
         result.Should().NotBeNull();
         result.IsValid.Should().BeTrue();
         result.Errors.Should().BeEmpty();
-        _userRepository.Received(1).SaveAsync(Arg.Any<User>());
+        await _userRepository.Received(1).SaveAsync(Arg.Any<User>());
     }
 }

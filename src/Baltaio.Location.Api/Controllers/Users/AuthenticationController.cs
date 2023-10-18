@@ -1,4 +1,6 @@
-﻿using Baltaio.Location.Api.Application.Users.Commons;
+﻿using Baltaio.Location.Api.Application.Users.Abstractions;
+using Baltaio.Location.Api.Application.Users.Login;
+using Baltaio.Location.Api.Application.Users.Login.Abstractions;
 using Baltaio.Location.Api.Application.Users.Register;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +11,12 @@ namespace Baltaio.Location.Api.Controllers.Users;
 public class AuthenticationController : ControllerBase
 {
     private readonly IUserRepository _userRepository;
+    private readonly IJwtGenerator _jwtGenerator;
 
-    public AuthenticationController(IUserRepository userRepository)
+    public AuthenticationController(IUserRepository userRepository, IJwtGenerator jwtGenerator)
     {
         _userRepository = userRepository;
+        _jwtGenerator = jwtGenerator;
     }
 
     [HttpPost("register")]
@@ -29,5 +33,20 @@ public class AuthenticationController : ControllerBase
         }
 
         return Ok();
+    }
+    [HttpPost("login")]
+    public async Task<IActionResult> LoginAsync(LoginUserRequest request)
+    {
+        LoginInput input = new(request.Email, request.Password);
+        LoginAppService service = new(_userRepository, _jwtGenerator);
+
+        LoginOutput output = await service.ExecuteAsync(input);
+
+        if(!output.IsValid)
+        {
+            return BadRequest(output.Errors);
+        }
+
+        return Ok(output.Token);
     }
 }
