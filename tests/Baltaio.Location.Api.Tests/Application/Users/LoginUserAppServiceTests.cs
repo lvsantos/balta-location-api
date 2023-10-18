@@ -4,6 +4,7 @@ using Baltaio.Location.Api.Application.Users.Login.Abstractions;
 using Baltaio.Location.Api.Domain.Users;
 using Baltaio.Location.Api.Infrastructure.Users.Authentication;
 using FluentAssertions;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 
 namespace Baltaio.Location.Api.Tests.Application.Users;
@@ -17,7 +18,13 @@ public class LoginUserAppServiceTests
     public LoginUserAppServiceTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
-        _jwtGenerator = new JwtGenerator();
+        JwtSettings jwtSettings = new()
+        {
+            ExpirationInMinutes = 1,
+            Issuer = "Teste",
+            Secret = "12345678901234567890123456789012"
+        };
+        _jwtGenerator = new JwtGenerator(Options.Create(jwtSettings));
         _service = new LoginAppService(_userRepository, _jwtGenerator);
     }
 

@@ -1,6 +1,7 @@
 ﻿using Baltaio.Location.Api.Application.Users.Login;
 using Baltaio.Location.Api.Application.Users.Login.Abstractions;
 using Baltaio.Location.Api.Domain.Users;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,12 +11,12 @@ namespace Baltaio.Location.Api.Infrastructure.Users.Authentication;
 
 internal class JwtGenerator : IJwtGenerator
 {
-    /*private readonly JwtSettings _jwtSettings;
+    private readonly JwtSettings _jwtSettings;
 
-    public JwtGenerator(JwtSettings jwtSettings)
+    public JwtGenerator(IOptions<JwtSettings> jwtSettingsOptions)
     {
-        _jwtSettings = jwtSettings;
-    }*/
+        _jwtSettings = jwtSettingsOptions.Value;
+    }
 
     public Token GenerateToken(User user)
     {
@@ -37,22 +38,21 @@ internal class JwtGenerator : IJwtGenerator
             new Claim(ClaimTypes.Email, user.Email)
         };
     }
-    private static SigningCredentials CreateSignature()
+    private SigningCredentials CreateSignature()
     {
-        //byte[] key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
-        byte[] key = Encoding.ASCII.GetBytes("12345678901234567890123456789012");
+        byte[] key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);    
 
         SigningCredentials credentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
 
         return credentials;
     }
-    private static Token CreateToken(Claim[] claims, SigningCredentials signingCredentials)
+    private Token CreateToken(Claim[] claims, SigningCredentials signingCredentials)
     {
         SecurityTokenDescriptor tokenDescriptor = new()
         {
-            Issuer = "Baltaio.FirstChallenge",
+            Issuer = _jwtSettings.Issuer,
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(2),
+            Expires = DateTime.UtcNow.AddHours(_jwtSettings.ExpirationInMinutes),
             SigningCredentials = signingCredentials
         };
         JwtSecurityTokenHandler tokenHandler = new();
