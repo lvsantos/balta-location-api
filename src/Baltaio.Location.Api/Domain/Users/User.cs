@@ -2,11 +2,13 @@
 
 public sealed class User
 {
+    private static string _salt = "$2a$12$uKcRY5YbGhvTe3M0jUnJvu";
+
     public User(string email, string password)
     {
         Id = Guid.NewGuid();
         Email = email;
-        Password = BCrypt.Net.BCrypt.HashPassword(password);
+        Password = BCrypt.Net.BCrypt.HashPassword(inputKey: password, _salt);
     }
 
     public Guid Id { get; init;  }
