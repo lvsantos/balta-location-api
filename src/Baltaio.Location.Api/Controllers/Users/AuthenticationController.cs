@@ -34,7 +34,7 @@ public class AuthenticationController : ControllerBase
         return Ok();
     }
     [HttpPost("login")]
-    public async Task<IActionResult> LoginAsync(LoginUserRequest request)
+    public async Task<IActionResult> LoginAsync(LoginRequest request)
     {
         LoginInput input = new(request.Email, request.Password);
 
