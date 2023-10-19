@@ -1,18 +1,24 @@
 ﻿using Baltaio.Location.Api.Application.Users.Abstractions;
 using Baltaio.Location.Api.Application.Users.Login.Abstractions;
 using Baltaio.Location.Api.Domain.Users;
+using Microsoft.Extensions.Options;
 
 namespace Baltaio.Location.Api.Application.Users.Login;
 
-public class LoginAppService
+internal class LoginAppService : ILoginAppService
 {
     private readonly IUserRepository _userRepository;
     private readonly IJwtGenerator _jwtGenerator;
+    private readonly SaltSettings _saltSettings;
 
-    public LoginAppService(IUserRepository userRepository, IJwtGenerator jwtGenerator)
+    public LoginAppService(
+        IUserRepository userRepository,
+        IJwtGenerator jwtGenerator,
+        IOptions<SaltSettings> options)
     {
         _userRepository = userRepository;
         _jwtGenerator = jwtGenerator;
+        _saltSettings = options.Value;
     }
 
     public async Task<LoginOutput> ExecuteAsync(LoginInput input)
@@ -23,7 +29,7 @@ public class LoginAppService
             return LoginOutput.ValidationErrors(input.Notifications);
         }
 
-        User userToSearch = new(input.Email, input.Password);
+        var userToSearch = User.Create(input.Email, input.Password, _saltSettings.Salt);
         User? user = await _userRepository.LoginAsync(userToSearch);
         if(user is null)
         {

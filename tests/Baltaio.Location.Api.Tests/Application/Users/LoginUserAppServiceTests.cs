@@ -14,6 +14,7 @@ public class LoginUserAppServiceTests
     private readonly IUserRepository _userRepository;
     private readonly IJwtGenerator _jwtGenerator;
     private LoginAppService _service;
+    private readonly SaltSettings _saltSettings;
 
     public LoginUserAppServiceTests()
     {
@@ -25,7 +26,11 @@ public class LoginUserAppServiceTests
             Secret = "12345678901234567890123456789012"
         };
         _jwtGenerator = new JwtGenerator(Options.Create(jwtSettings));
-        _service = new LoginAppService(_userRepository, _jwtGenerator);
+        _saltSettings = new()
+        {
+            Salt = "$2a$12$uKcRY5YbGhvTe3M0jUnJvu"
+        };
+        _service = new LoginAppService(_userRepository, _jwtGenerator, Options.Create(_saltSettings));
     }
 
     [Theory(DisplayName = "Deve retornar erro de validação quando o email do usuário for inválido")]
@@ -94,7 +99,7 @@ public class LoginUserAppServiceTests
         //Arrange
         LoginInput input = new("user-not-found@domain.com", "12345678");
         _userRepository.LoginAsync(Arg.Any<User>()).Returns((User?)null);
-        _service = new(_userRepository, _jwtGenerator);
+        _service = new(_userRepository, _jwtGenerator, Options.Create(_saltSettings));
 
         //Act
         LoginOutput output = await _service.ExecuteAsync(input);
@@ -111,8 +116,8 @@ public class LoginUserAppServiceTests
     {
         //Arrange
         LoginInput input = new("email-valid@domain.com", "12345678");
-        _userRepository.LoginAsync(Arg.Any<User>()).Returns(new User(input.Email, input.Password));
-        _service = new(_userRepository, _jwtGenerator);
+        _userRepository.LoginAsync(Arg.Any<User>()).Returns(User.Create(input.Email, input.Password, _saltSettings.Salt));
+        _service = new(_userRepository, _jwtGenerator, Options.Create(_saltSettings));
 
         //Act
         LoginOutput output = await _service.ExecuteAsync(input);

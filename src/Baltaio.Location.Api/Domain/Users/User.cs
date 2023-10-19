@@ -2,18 +2,19 @@
 
 public sealed class User
 {
-    private static string _salt = "$2a$12$uKcRY5YbGhvTe3M0jUnJvu";
-
-    public User(string email, string password)
+    private User(string email, string password)
     {
         Id = Guid.NewGuid();
         Email = email;
-        Password = BCrypt.Net.BCrypt.HashPassword(inputKey: password, _salt);
+        Password = password;
     }
 
     public Guid Id { get; init;  }
     public string Email { get; private set; }
     public string Password { get; private set; }
+
+    public static User Create(string email, string password, string salt) =>
+        new(email, BCrypt.Net.BCrypt.HashPassword(inputKey: password, salt));
 
     public bool VerifyPassword(string password) =>
         BCrypt.Net.BCrypt.Verify(password, Password);

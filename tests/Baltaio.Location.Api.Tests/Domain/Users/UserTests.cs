@@ -5,6 +5,13 @@ namespace Baltaio.Location.Api.Tests.Domain.Users;
 
 public class UserTests
 {
+    private readonly string _salt;
+
+    public UserTests()
+    {
+        _salt = "$2a$12$uKcRY5YbGhvTe3M0jUnJvu";
+    }
+
     [Fact(DisplayName = "Deve criar um usuário válido")]
     public void Should_CreateValidUser()
     {
@@ -13,7 +20,7 @@ public class UserTests
         var password = "12345678";
 
         // Act
-        User user = new(email, password);
+        var user = User.Create(email, password, _salt);
 
         // Assert
         user.Should().NotBeNull();
@@ -29,8 +36,8 @@ public class UserTests
         var password = "12345678";
 
         // Act
-        User user = new(email, password);
-        User otherUser = new(email, password);
+        var user = User.Create(email, password, _salt);
+        var otherUser = User.Create(email, password, _salt);
 
         // Assert
         user.Should().NotBeNull();

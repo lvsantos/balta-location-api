@@ -1,7 +1,9 @@
 ﻿using Baltaio.Location.Api.Application.Users.Abstractions;
+using Baltaio.Location.Api.Application.Users.Login;
 using Baltaio.Location.Api.Application.Users.Register;
 using Baltaio.Location.Api.Domain.Users;
 using FluentAssertions;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 
 namespace Baltaio.Location.Api.Tests.Application.Users;
@@ -10,11 +12,16 @@ public class RegisterUserAppServiceTests
 {
     private RegisterUserAppService _service;
     private readonly IUserRepository _userRepository;
+    private readonly SaltSettings _saltSettings;
 
     public RegisterUserAppServiceTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
-        _service = new(_userRepository);
+        _saltSettings = new()
+        {
+            Salt = "$2a$12$uKcRY5YbGhvTe3M0jUnJvu"
+        };
+        _service = new(_userRepository, Options.Create(_saltSettings));
     }
 
     [Theory(DisplayName = "Deve retornar erros de validação quando o email for inválido")]
@@ -92,7 +99,7 @@ public class RegisterUserAppServiceTests
         _userRepository
             .ExistsAsync(email)
             .Returns(true);
-        _service = new(_userRepository);
+        _service = new(_userRepository, Options.Create(_saltSettings));
 
         // Act
         RegisterUserOutput result = await _service.ExecuteAsync(input);
