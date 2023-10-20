@@ -1,12 +1,10 @@
-using Baltaio.Location.Api.Application.Commons;
 using Baltaio.Location.Api.Application.Users.Commons;
 using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Domain;
 using Baltaio.Location.Api.Infrastructure;
 using Baltaio.Location.Api.Infrastructure.Addresses;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using SpreadsheetLight;
+using Baltaio.Location.Api.Infrastructure.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
