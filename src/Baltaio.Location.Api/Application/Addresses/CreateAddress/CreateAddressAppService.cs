@@ -1,4 +1,5 @@
 ﻿using Baltaio.Location.Api.Application.Addresses.Commons;
+using Baltaio.Location.Api.Domain;
 using Baltaio.Location.Api.Domain.Addresses;
 
 namespace Baltaio.Location.Api.Application.Addresses.CreateAddress;

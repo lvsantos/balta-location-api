@@ -1,4 +1,5 @@
-﻿using Baltaio.Location.Api.Domain.Addresses;
+﻿using Baltaio.Location.Api.Domain;
+using Baltaio.Location.Api.Domain.Addresses;
 using FluentAssertions;
 
 namespace Baltaio.Location.Api.Tests.Domain;

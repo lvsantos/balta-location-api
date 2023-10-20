@@ -1,5 +1,6 @@
 ﻿using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Application.Addresses.CreateAddress;
+using Baltaio.Location.Api.Domain;
 using Baltaio.Location.Api.Domain.Addresses;
 using FluentAssertions;
 using NSubstitute;
