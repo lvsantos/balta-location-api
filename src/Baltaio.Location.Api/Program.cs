@@ -1,3 +1,5 @@
+using Baltaio.Location.Api.Application.Commons;
+using Baltaio.Location.Api.Application.Users.Commons;
 using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Domain;
 using Baltaio.Location.Api.Infrastructure;
@@ -14,6 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IStateRepository, StateRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
