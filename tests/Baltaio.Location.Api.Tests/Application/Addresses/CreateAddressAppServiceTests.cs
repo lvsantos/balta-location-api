@@ -22,14 +22,16 @@ public class CreateAddressAppServiceTests
     {
         //Arrange
         int ibgeCode = 42001010;
-        CreateAddressInput input = new(ibgeCode);
+        string nameCity = "Belo Horizonte";
+        int stateCode = 99;
+        CreateCityInput input = new(ibgeCode, nameCity, stateCode);
         _cityRepositoryMock
             .GetAsync(ibgeCode)
             .Returns((City?)null);
-        CreateAddressAppService service = new(_cityRepositoryMock, _addressRepositoryMock);
+        CreateCityAppService service = new(_cityRepositoryMock, _addressRepositoryMock);
 
         //Act
-        CreateAddressOutput result = await service.ExecuteAsync(input);
+        CreateCityOutput result = await service.ExecuteAsync(input);
 
         //Assert
         result.Message.Should().Be("Código IBGE não encontrado.");
@@ -40,14 +42,16 @@ public class CreateAddressAppServiceTests
     {
         //Arrange
         int ibgeCode = 2900207;
-        CreateAddressInput input = new(ibgeCode);
+        string nameCity = "Belo Horizonte";
+        int stateCode = 99;
+        CreateCityInput input = new(ibgeCode, nameCity, stateCode);
         _cityRepositoryMock
             .GetAsync(ibgeCode)
             .Returns(new City());
-        CreateAddressAppService service = new(_cityRepositoryMock, _addressRepositoryMock);
+        CreateCityAppService service = new(_cityRepositoryMock, _addressRepositoryMock);
 
         //Act
-        CreateAddressOutput result = await service.ExecuteAsync(input);
+        CreateCityOutput result = await service.ExecuteAsync(input);
 
         //Assert
         result.Message.Should().Be("Endereço criado com sucesso.");

@@ -5,6 +5,7 @@ namespace Baltaio.Location.Api.Infrastructure.Addresses;
 
 internal class CityRepository : ICityRepository
 {
+   
     private static Dictionary<int, City> _cities = new()
     {
         {5200050, new City()},
@@ -14,7 +15,18 @@ internal class CityRepository : ICityRepository
 
     public Task<City?> GetAsync(int ibgeCode)
     {
-        City? city = _cities.GetValueOrDefault(ibgeCode);
+        City? city = _cities.GetValueOrDefault(ibgeCode);        
+        return Task.FromResult(city);
+    }
+    public Task<City?> SaveAsync(int ibgeCode, string NameCity, int stateCode)
+    {
+        City city = new()
+        {
+            IbgeCode = ibgeCode,
+            NameCity = NameCity,
+            StateCode = stateCode
+        };
+        _cities.Add(ibgeCode, city);
         return Task.FromResult(city);
     }
 }
