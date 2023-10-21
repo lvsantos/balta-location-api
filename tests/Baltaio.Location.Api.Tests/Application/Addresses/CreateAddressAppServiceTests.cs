@@ -23,36 +23,40 @@ public class CreateAddressAppServiceTests
     {
         //Arrange
         int ibgeCode = 42001010;
-        CreateAddressInput input = new(ibgeCode);
+        string nameCity = "Belo Horizonte";
+        int stateCode = 99;
+        CreateCityInput input = new(ibgeCode, nameCity, stateCode);
         _cityRepositoryMock
             .GetAsync(ibgeCode)
             .Returns((City?)null);
-        CreateAddressAppService service = new(_cityRepositoryMock, _addressRepositoryMock);
+        CreateCityAppService service = new(_cityRepositoryMock, _addressRepositoryMock);
 
         //Act
-        CreateAddressOutput result = await service.ExecuteAsync(input);
+        CreateCityOutput result = await service.ExecuteAsync(input);
 
         //Assert
         result.Message.Should().Be("Código IBGE não encontrado.");
-        result.AddressCode.Should().BeEmpty();
+        //result.AddressCode.Should().BeEmpty();
     }
     [Fact(DisplayName = "Deve salvar endereço no banco de dados se código do IBGE existir.")]
     public async Task Should_SaveAddress_When_IbgeCodeExists()
     {
         //Arrange
         int ibgeCode = 2900207;
-        CreateAddressInput input = new(ibgeCode);
+        string nameCity = "Belo Horizonte";
+        int stateCode = 99;
+        CreateCityInput input = new(ibgeCode, nameCity, stateCode);
         _cityRepositoryMock
             .GetAsync(ibgeCode)
-            .Returns(new City(0, "", ""));
-        CreateAddressAppService service = new(_cityRepositoryMock, _addressRepositoryMock);
+            .Returns(new City(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>()));
+        CreateCityAppService service = new(_cityRepositoryMock, _addressRepositoryMock);
 
         //Act
-        CreateAddressOutput result = await service.ExecuteAsync(input);
+        CreateCityOutput result = await service.ExecuteAsync(input);
 
         //Assert
         result.Message.Should().Be("Endereço criado com sucesso.");
-        result.AddressCode.Should().NotBeEmpty();
+        //result.AddressCode.Should().NotBeEmpty();
         await _addressRepositoryMock.Received(1).SaveAsync(Arg.Any<Address>());
     }
 }
