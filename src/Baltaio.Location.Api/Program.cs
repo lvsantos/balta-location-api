@@ -57,7 +57,6 @@ app.Run();
 
 async Task<IResult> ImportData(IFormFile file)
 {
-    throw new Exception();
     var allowedContentTypes = new string[]
         { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" };
 
