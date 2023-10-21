@@ -6,11 +6,13 @@ using Baltaio.Location.Api.Application.Users.Login;
 using Baltaio.Location.Api.Application.Users.Login.Abstractions;
 using Baltaio.Location.Api.Application.Users.Register;
 using Baltaio.Location.Api.Application.Users.Register.Abstraction;
+using Baltaio.Location.Api.Contracts.Users;
 using Baltaio.Location.Api.Infrastructure;
 using Baltaio.Location.Api.Infrastructure.Addresses;
 using Baltaio.Location.Api.Infrastructure.Users.Authentication;
 using Baltaio.Location.Api.Infrastructure.Users.Persistance;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -73,7 +75,21 @@ app.UseAuthorization();
 
 #region Routes
 
-app.MapPost("import-data", (IFormFile file) => ImportData(file));
+app.MapPost("api/auth/register", ([FromBody] RegisterUserRequest request) => RegisterAsync(request));
+app.MapPost("api/auth/login", ([FromBody] LoginRequest request) => LoginAsync(request));
+
+app.MapPost("api/locations", () => Results.Ok())
+    .RequireAuthorization();
+app.MapGet("api/locations/{id}", () => Results.Ok())
+    .RequireAuthorization();
+app.MapPut("api/locations/{id}", () => Results.Ok())
+    .RequireAuthorization();
+app.MapDelete("api/locations/{id}", () => Results.Ok())
+    .RequireAuthorization();
+app.MapGet("api/locations", () => Results.Ok())
+    .RequireAuthorization();
+app.MapPost("api/locations/import-data", (IFormFile file) => ImportData(file))
+    .RequireAuthorization();
 
 #endregion
 
@@ -81,6 +97,35 @@ app.MapControllers();
 
 app.Run();
 
+async Task<IResult> RegisterAsync(RegisterUserRequest request)
+{
+    RegisterUserInput input = new(request.Email, request.Password);
+    var registerUserAppService = app.Services.CreateScope().ServiceProvider.GetRequiredService<IRegisterUserAppService>();
+
+    RegisterUserOutput output = await registerUserAppService.ExecuteAsync(input);
+
+    if (!output.IsValid)
+    {
+        return Results.BadRequest(output.Errors);
+    }
+
+    return Results.Ok();
+}
+async Task<IResult> LoginAsync(LoginRequest request)
+{
+    LoginInput input = new(request.Email, request.Password);
+    var loginAppService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ILoginAppService>();
+
+    LoginOutput output = await loginAppService.ExecuteAsync(input);
+
+    if (!output.IsValid)
+    {
+        return Results.BadRequest(output.Errors);
+    }
+
+    return Results.Ok(output.Token);
+}
+ 
 async Task<IResult> ImportData(IFormFile file)
 {
     var allowedContentTypes = new string[]
