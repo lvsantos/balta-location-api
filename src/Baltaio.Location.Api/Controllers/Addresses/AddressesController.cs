@@ -1,7 +1,9 @@
 ﻿using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Application.Addresses.CreateAddress;
+using Baltaio.Location.Api.Application.Addresses.GetAddress;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Baltaio.Location.Api.Controllers.Addresses;
 
@@ -13,6 +15,7 @@ public class AddressesController : ControllerBase
     private readonly ICityRepository _cityRepository;
     private readonly IAddressRepository _addressRepository;
 
+
     public AddressesController(ICityRepository cityRepository, IAddressRepository addressRepository)
     {
         _cityRepository = cityRepository;
@@ -22,20 +25,47 @@ public class AddressesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateAddressAsync(CreateAddressRequest request)
     {
-        CreateAddressAppService service = new(_cityRepository, _addressRepository);
-        CreateAddressInput input = new(request. IbgeCode);
+        CreateCityAppService service = new(_cityRepository, _addressRepository);
+        CreateCityInput input = new(request.IbgeCode, request.NameCity, request.StateCode);
 
-        CreateAddressOutput output = await service.ExecuteAsync(input);
+        CreateCityOutput output = await service.ExecuteAsync(input);
 
-        if (output.AddressCode == Guid.Empty)
-            return BadRequest(output.Message);
+        if (output.Valid == false)
+        {
+            ModelStateDictionary keyValuePairs = new();
+            keyValuePairs.AddModelError(string.Empty, output.Message);
+            return ValidationProblem(keyValuePairs);
+        }
 
-        return CreatedAtAction(nameof(Get), new { id = output.AddressCode }, output);
+        return CreatedAtAction(nameof(Get), new { id = request.IbgeCode}, null);
     }
 
+    //<summary>
+    /// <summary>
+    /// Lista todos os dados de um endereço
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+
     [HttpGet("{id}")]
-    public IActionResult Get(Guid id)
+    public async Task<IActionResult> Get(int id)
     {
-        return Ok();
+        GetCityAppService service = new(_cityRepository, _addressRepository);      
+
+        GetCityOutput output = await service.ExecuteAsync(id);
+        
+        if (output.Valid == false)
+        {
+            ModelStateDictionary keyValuePairs = new();
+            keyValuePairs.AddModelError(string.Empty, output.Message);
+            return ValidationProblem(keyValuePairs);
+        }
+        GetCityResponse GetCityResponse = new (output.IbgeCode, output.NameCity, output.StateCode)
+        {
+             IbgeCode = output.IbgeCode,
+             NameCity = output.NameCity,
+             StateCode = output.StateCode   
+        };
+        return Ok(GetCityResponse);
     }
 }
