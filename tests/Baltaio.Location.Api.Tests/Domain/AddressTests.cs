@@ -1,4 +1,5 @@
-﻿using Baltaio.Location.Api.Domain.Addresses;
+﻿using Baltaio.Location.Api.Domain;
+using Baltaio.Location.Api.Domain.Addresses;
 using FluentAssertions;
 
 namespace Baltaio.Location.Api.Tests.Domain;
@@ -9,7 +10,7 @@ public class AddressTests
     public void Should_Create_Location_Successfully()
     {
         //Arrange
-        City city = new();
+        City city = new(0, "", "");
 
         //Act
         Address address = new(city);
