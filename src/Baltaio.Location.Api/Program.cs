@@ -75,6 +75,8 @@ app.UseAuthorization();
 
 #region Routes
 
+app.MapGet("is-alive", () => Results.Ok());
+
 app.MapPost("api/auth/register", ([FromBody] RegisterUserRequest request) => RegisterAsync(request));
 app.MapPost("api/auth/login", ([FromBody] LoginRequest request) => LoginAsync(request));
 
