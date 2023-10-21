@@ -7,6 +7,7 @@ using SpreadsheetLight;
 using Baltaio.Location.Api.Infrastructure.Users;
 using Baltaio.Location.Api.Application.Data.Import.Commons;
 using Baltaio.Location.Api.Application.Data.Import.ImportData;
+using DocumentFormat.OpenXml.InkML;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,12 +28,18 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-//}
+app.UseSwagger();
+app.UseSwaggerUI();
+
+if (app.Environment.IsProduction())
+{
+    app.UseExceptionHandler(exceptionHandlerApp =>
+        exceptionHandlerApp.Run(async context => {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = "Ocorreu um erro interno.";
+        })
+    );
+}
 
 app.UseHttpsRedirection();
 
@@ -50,6 +57,7 @@ app.Run();
 
 async Task<IResult> ImportData(IFormFile file)
 {
+    throw new Exception();
     var allowedContentTypes = new string[]
         { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" };
 
