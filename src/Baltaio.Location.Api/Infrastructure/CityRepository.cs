@@ -37,4 +37,9 @@ internal class CityRepository : ICityRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task<City?> SaveAsync(int IbgeCode, string NameCity, int StateCode)
+    {
+        throw new NotImplementedException();
+    }
 }

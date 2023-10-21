@@ -3,6 +3,7 @@ using Baltaio.Location.Api.Domain.Addresses;
 
 namespace Baltaio.Location.Api.Infrastructure.Addresses;
 
+[Obsolete("Não será usado mais")]
 internal class AddressRepository : IAddressRepository
 {
     private static Dictionary<Guid, Address> _addresses = new();
