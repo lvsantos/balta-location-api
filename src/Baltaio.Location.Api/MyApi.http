@@ -1,0 +1,27 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+
+POST https://localhost:7033/api/auth/register
+Content-Type: application/json
+Accept-Charset: utf-8
+
+{
+  "email": "joao.silva@example.com",
+  "password": "SenhaVálida123"
+}
+
+###
+
+POST https://localhost:7033/api/auth/login
+Content-Type: application/json
+Accept-Charset: utf-8
+
+{
+  "email": "joao.silva@example.com",
+  "password": "SenhaVálida123"
+}
+
+
+###
+
+GET https://localhost:7033/api/addresses/9245fe4a-d402-451c-b9ed-9c1a04247482
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImIzMGU3ZmIxLTdkNTYtNDU3Zi04MDY4LTM5MjMwZmNjZmY2ZSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5Nzg5ODMxMSwiZXhwIjoxNjk4MzMwMzExLCJpYXQiOjE2OTc4OTgzMTEsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.Nu5UKGEHveGg8EkNie4HGZlcx3oqtE2VoHGurUXj8rs
