@@ -1,7 +1,9 @@
-﻿using Baltaio.Location.Api.Application.Users.Commons;
+﻿using Baltaio.Location.Api.Application.Users.Abstractions;
+using Baltaio.Location.Api.Application.Users.Login;
 using Baltaio.Location.Api.Application.Users.Register;
 using Baltaio.Location.Api.Domain.Users;
 using FluentAssertions;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 
 namespace Baltaio.Location.Api.Tests.Application.Users;
@@ -10,11 +12,16 @@ public class RegisterUserAppServiceTests
 {
     private RegisterUserAppService _service;
     private readonly IUserRepository _userRepository;
+    private readonly SaltSettings _saltSettings;
 
     public RegisterUserAppServiceTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
-        _service = new(_userRepository);
+        _saltSettings = new()
+        {
+            Salt = "$2a$12$uKcRY5YbGhvTe3M0jUnJvu"
+        };
+        _service = new(_userRepository, Options.Create(_saltSettings));
     }
 
     [Theory(DisplayName = "Deve retornar erros de validação quando o email for inválido")]
@@ -27,7 +34,7 @@ public class RegisterUserAppServiceTests
     [InlineData("")]
     [InlineData(null)]
     [Trait("Application", "Users")]
-    public async Task Should_ReturnValidationError_When_EmailIsInvalid(string email)
+    public async Task Should_ReturnValidationError_When_EmailIsInvalid(string? email)
     {
         // Arrange
         string password = "12345678";
@@ -92,7 +99,7 @@ public class RegisterUserAppServiceTests
         _userRepository
             .ExistsAsync(email)
             .Returns(true);
-        _service = new(_userRepository);
+        _service = new(_userRepository, Options.Create(_saltSettings));
 
         // Act
         RegisterUserOutput result = await _service.ExecuteAsync(input);
@@ -119,6 +126,6 @@ public class RegisterUserAppServiceTests
         result.Should().NotBeNull();
         result.IsValid.Should().BeTrue();
         result.Errors.Should().BeEmpty();
-        _userRepository.Received(1).SaveAsync(Arg.Any<User>());
+        await _userRepository.Received(1).SaveAsync(Arg.Any<User>());
     }
 }

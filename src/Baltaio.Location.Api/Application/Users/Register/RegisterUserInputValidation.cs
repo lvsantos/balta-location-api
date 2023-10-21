@@ -12,3 +12,5 @@ public class RegisterUserInputValidation : Contract<RegisterUserInput>
             .IsNotNull(input.Password, "Password.Invalid", "A senha deve conter no mínimo 8 caracteres");
     }
 }
+
+

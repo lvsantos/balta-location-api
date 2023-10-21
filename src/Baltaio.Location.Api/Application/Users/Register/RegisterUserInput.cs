@@ -3,7 +3,7 @@
 namespace Baltaio.Location.Api.Application.Users.Register;
 
 public sealed class RegisterUserInput : Notifiable<Notification>
-{
+{ 
     public RegisterUserInput(string email, string password)
     {
         Email = email;

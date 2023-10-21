@@ -1,15 +1,20 @@
-﻿using Baltaio.Location.Api.Application.Users.Commons;
+﻿using Baltaio.Location.Api.Application.Users.Abstractions;
+using Baltaio.Location.Api.Application.Users.Login;
+using Baltaio.Location.Api.Application.Users.Register.Abstraction;
 using Baltaio.Location.Api.Domain.Users;
+using Microsoft.Extensions.Options;
 
 namespace Baltaio.Location.Api.Application.Users.Register;
 
-public class RegisterUserAppService
+internal class RegisterUserAppService : IRegisterUserAppService
 {
     private readonly IUserRepository _userRepository;
+    private readonly SaltSettings _saltSettings;
 
-    public RegisterUserAppService(IUserRepository userRepository)
+    public RegisterUserAppService(IUserRepository userRepository, IOptions<SaltSettings> options)
     {
         _userRepository = userRepository;
+        _saltSettings = options.Value;
     }
 
     public async Task<RegisterUserOutput> ExecuteAsync(RegisterUserInput input)
@@ -26,7 +31,7 @@ public class RegisterUserAppService
             return RegisterUserOutput.ValidationErrors(new[] { "O email informado já está em uso" });
         }
 
-        User user = new(input.Email, input.Password);
+        var user = User.Create(input.Email, input.Password, _saltSettings.Salt);
         await _userRepository.SaveAsync(user);
 
         return RegisterUserOutput.Success();
