@@ -5,6 +5,8 @@ using Baltaio.Location.Api.Infrastructure;
 using Baltaio.Location.Api.Infrastructure.Addresses;
 using SpreadsheetLight;
 using Baltaio.Location.Api.Infrastructure.Users;
+using Baltaio.Location.Api.Application.Data.Load.Commons;
+using Baltaio.Location.Api.Application.Data.Load.LoadData;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IStateRepository, StateRepository>();
+builder.Services.AddScoped<IFileRepository, FileRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IImportDataAppService, ImportDataAppService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -33,82 +38,22 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapPost("import-excel", (IFormFile file) => ImportData(file));
+app.MapPost("import-data", (IFormFile file) => ImportData(file));
 
 app.MapControllers();
 
 app.Run();
 
-async Task<List<object>> ImportData(IFormFile file)
+async Task<IResult> ImportData(IFormFile file)
 {
     var allowedContentTypes = new string[] 
         { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" };
 
     if(!allowedContentTypes.Contains(file.ContentType))
-        throw new Exception();
+        return Results.BadRequest("Tipo de arquivo inválido.");
 
-    SLDocument document = new SLDocument(file.OpenReadStream());
-    var worksheetNames = document.GetWorksheetNames();
+    var importDataAppService = app.Services.CreateScope().ServiceProvider.GetRequiredService<IImportDataAppService>();
+    var importedDataOutput = await importDataAppService.Execute(file.OpenReadStream());
 
-    bool requiredWorksheetsExist = worksheetNames.Contains("ESTADOS") 
-                                    && worksheetNames.Contains("MUNICIPIOS");
-
-    if (!requiredWorksheetsExist)
-        throw new Exception();
-
-    document.SelectWorksheet("ESTADOS");
-
-    List<State> states = new();
-
-    const int firstDataRow = 2;
-    for (int i = firstDataRow; document.HasCellValue($"A{i}"); i++)
-    {
-        states.Add(
-            new State
-            (
-                document.GetCellValueAsInt32($"A{i}"),
-                document.GetCellValueAsString($"B{i}"),
-                document.GetCellValueAsString($"C{i}")
-            )
-        );
-    }
-
-    document.SelectWorksheet("MUNICIPIOS");
-    
-    List<City> cities = new();
-    for (int i = firstDataRow; document.HasCellValue($"A{i}"); i++)
-    {
-        cities.Add(
-            new City
-            (
-                document.GetCellValueAsInt32($"A{i}"),
-                document.GetCellValueAsString($"B{i}"),
-                document.GetCellValueAsString($"C{i}")
-            )
-        );
-    }
-
-    ICityRepository cityRepository = app.Services.CreateScope().ServiceProvider.GetRequiredService<ICityRepository>();
-    IStateRepository stateRepository = app.Services.CreateScope().ServiceProvider.GetRequiredService<IStateRepository>();
-
-    try
-    {
-        await stateRepository.AddAllAsync(states);
-        await cityRepository.AddAllAsync(cities);
-    }
-    catch
-    {
-
-    }
-
-    var result = new List<object>();
-
-    result.AddRange(states);
-    result.AddRange(cities.Take(20));   
-
-    return result;
+    return Results.Accepted(null, importedDataOutput);
 }
-
-public record StateDTO(int CodigoUF, string SiglaUF, string NomeUF);
-
-public record CityDTO(int CodigoMunicipio, string NomeMunicipio, string CodigoUF);
