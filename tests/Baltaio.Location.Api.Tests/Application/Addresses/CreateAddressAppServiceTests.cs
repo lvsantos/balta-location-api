@@ -1,5 +1,6 @@
 ﻿using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Application.Addresses.CreateAddress;
+using Baltaio.Location.Api.Domain;
 using Baltaio.Location.Api.Domain.Addresses;
 using FluentAssertions;
 using NSubstitute;
@@ -43,7 +44,7 @@ public class CreateAddressAppServiceTests
         CreateAddressInput input = new(ibgeCode);
         _cityRepositoryMock
             .GetAsync(ibgeCode)
-            .Returns(new City());
+            .Returns(new City(0, "", ""));
         CreateAddressAppService service = new(_cityRepositoryMock, _addressRepositoryMock);
 
         //Act
