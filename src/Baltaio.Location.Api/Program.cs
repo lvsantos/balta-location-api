@@ -5,8 +5,8 @@ using Baltaio.Location.Api.Infrastructure;
 using Baltaio.Location.Api.Infrastructure.Addresses;
 using SpreadsheetLight;
 using Baltaio.Location.Api.Infrastructure.Users;
-using Baltaio.Location.Api.Application.Data.Load.Commons;
-using Baltaio.Location.Api.Application.Data.Load.LoadData;
+using Baltaio.Location.Api.Application.Data.Import.Commons;
+using Baltaio.Location.Api.Application.Data.Import.ImportData;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +38,11 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+#region Routes
+
 app.MapPost("import-data", (IFormFile file) => ImportData(file));
+
+#endregion
 
 app.MapControllers();
 
@@ -46,10 +50,10 @@ app.Run();
 
 async Task<IResult> ImportData(IFormFile file)
 {
-    var allowedContentTypes = new string[] 
+    var allowedContentTypes = new string[]
         { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" };
 
-    if(!allowedContentTypes.Contains(file.ContentType))
+    if (!allowedContentTypes.Contains(file.ContentType))
         return Results.BadRequest("Tipo de arquivo inválido.");
 
     var importDataAppService = app.Services.CreateScope().ServiceProvider.GetRequiredService<IImportDataAppService>();

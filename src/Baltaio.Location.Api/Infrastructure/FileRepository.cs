@@ -1,4 +1,4 @@
-﻿using Baltaio.Location.Api.Application.Data.Load.Commons;
+﻿using Baltaio.Location.Api.Application.Data.Import.Commons;
 using Baltaio.Location.Api.Domain;
 using SpreadsheetLight;
 
@@ -8,12 +8,20 @@ namespace Baltaio.Location.Api.Infrastructure
     {
         public List<City> GetCities(Stream source)
         {
+            SLDocument document;
             List<City> cities = new();
 
-            SLDocument document = new SLDocument(source);
-            bool worksheetsExist = document.SelectWorksheet("MUNICIPIOS");
-            if (!worksheetsExist)
+            try
+            {
+                document = new SLDocument(source);
+                bool worksheetsExist = document.SelectWorksheet("MUNICIPIOS");
+                if (!worksheetsExist)
+                    return cities;
+            }
+            catch
+            {
                 return cities;
+            }
 
             const int firstDataRow = 2;
             for (int i = firstDataRow; document.HasCellValue($"A{i}"); i++)
@@ -34,11 +42,18 @@ namespace Baltaio.Location.Api.Infrastructure
         public List<State> GetStates(Stream source)
         {
             List<State> states = new();
-
-            SLDocument document = new SLDocument(source);
-            bool worksheetsExist = document.SelectWorksheet("ESTADOS");
-            if (!worksheetsExist)
+            SLDocument document;
+            try
+            {
+                document = new SLDocument(source);
+                bool worksheetsExist = document.SelectWorksheet("ESTADOS");
+                if (!worksheetsExist)
+                    return states;
+            }
+            catch
+            {
                 return states;
+            }
 
             const int firstDataRow = 2;
             for (int i = firstDataRow; document.HasCellValue($"A{i}"); i++)

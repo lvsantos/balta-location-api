@@ -10,7 +10,7 @@ public class AddressTests
     public void Should_Create_Location_Successfully()
     {
         //Arrange
-        City city = new();
+        City city = new(0, "", "");
 
         //Act
         Address address = new(city);

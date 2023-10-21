@@ -44,7 +44,7 @@ public class CreateAddressAppServiceTests
         CreateAddressInput input = new(ibgeCode);
         _cityRepositoryMock
             .GetAsync(ibgeCode)
-            .Returns(new City());
+            .Returns(new City(0, "", ""));
         CreateAddressAppService service = new(_cityRepositoryMock, _addressRepositoryMock);
 
         //Act

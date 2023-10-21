@@ -1,6 +1,6 @@
 ﻿using Baltaio.Location.Api.Domain;
 
-namespace Baltaio.Location.Api.Application.Data.Load.Commons
+namespace Baltaio.Location.Api.Application.Data.Import.Commons
 {
     public interface IFileRepository
     {
