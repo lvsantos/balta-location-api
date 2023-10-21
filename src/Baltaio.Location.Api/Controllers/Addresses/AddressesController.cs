@@ -1,10 +1,12 @@
 ﻿using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Application.Addresses.CreateAddress;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Baltaio.Location.Api.Controllers.Addresses;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class AddressesController : ControllerBase
 {

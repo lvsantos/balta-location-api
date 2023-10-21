@@ -40,7 +40,7 @@ internal class JwtGenerator : IJwtGenerator
     }
     private SigningCredentials CreateSignature()
     {
-        byte[] key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);    
+        byte[] key = Encoding.UTF8.GetBytes(_jwtSettings.Secret);    
 
         SigningCredentials credentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
 
@@ -51,6 +51,7 @@ internal class JwtGenerator : IJwtGenerator
         SecurityTokenDescriptor tokenDescriptor = new()
         {
             Issuer = _jwtSettings.Issuer,
+            Audience = _jwtSettings.Audience,
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddHours(_jwtSettings.ExpirationInMinutes),
             SigningCredentials = signingCredentials
