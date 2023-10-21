@@ -1,5 +1,7 @@
-﻿using Baltaio.Location.Api.Application.Users.Commons;
+﻿using Baltaio.Location.Api.Application.Users.Login;
+using Baltaio.Location.Api.Application.Users.Login.Abstractions;
 using Baltaio.Location.Api.Application.Users.Register;
+using Baltaio.Location.Api.Application.Users.Register.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Baltaio.Location.Api.Controllers.Users;
@@ -8,20 +10,21 @@ namespace Baltaio.Location.Api.Controllers.Users;
 [Route("api/auth")]
 public class AuthenticationController : ControllerBase
 {
-    private readonly IUserRepository _userRepository;
+    private readonly IRegisterUserAppService _registerUserAppService;
+    private readonly ILoginAppService _loginAppService;
 
-    public AuthenticationController(IUserRepository userRepository)
+    public AuthenticationController(IRegisterUserAppService registerUserAppService, ILoginAppService loginAppService)
     {
-        _userRepository = userRepository;
+        _registerUserAppService = registerUserAppService;
+        _loginAppService = loginAppService;
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> RegisterAsync(RegisterUserRequest request)
     {
         RegisterUserInput input = new(request.Email, request.Password);
-        RegisterUserAppService service = new RegisterUserAppService(_userRepository);
 
-        RegisterUserOutput output = await service.ExecuteAsync(input);
+        RegisterUserOutput output = await _registerUserAppService.ExecuteAsync(input);
 
         if(!output.IsValid)
         {
@@ -29,5 +32,19 @@ public class AuthenticationController : ControllerBase
         }
 
         return Ok();
+    }
+    [HttpPost("login")]
+    public async Task<IActionResult> LoginAsync(LoginRequest request)
+    {
+        LoginInput input = new(request.Email, request.Password);
+
+        LoginOutput output = await _loginAppService.ExecuteAsync(input);
+
+        if(!output.IsValid)
+        {
+            return BadRequest(output.Errors);
+        }
+
+        return Ok(output.Token);
     }
 }
