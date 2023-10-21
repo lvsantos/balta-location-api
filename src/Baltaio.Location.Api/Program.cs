@@ -1,5 +1,9 @@
 using Asp.Versioning;
 using Baltaio.Location.Api.Application.Addresses.Commons;
+using Baltaio.Location.Api.Application.Addresses.CreateAddress;
+using Baltaio.Location.Api.Application.Addresses.CreateAddress.Abstractions;
+using Baltaio.Location.Api.Application.Addresses.GetAddress;
+using Baltaio.Location.Api.Application.Addresses.GetAddress.Abstractions;
 using Baltaio.Location.Api.Application.Data.Import.Commons;
 using Baltaio.Location.Api.Application.Data.Import.ImportData;
 using Baltaio.Location.Api.Application.Users.Abstractions;
@@ -7,9 +11,9 @@ using Baltaio.Location.Api.Application.Users.Login;
 using Baltaio.Location.Api.Application.Users.Login.Abstractions;
 using Baltaio.Location.Api.Application.Users.Register;
 using Baltaio.Location.Api.Application.Users.Register.Abstraction;
+using Baltaio.Location.Api.Contracts.Cities;
 using Baltaio.Location.Api.Contracts.Users;
 using Baltaio.Location.Api.Infrastructure;
-using Baltaio.Location.Api.Infrastructure.Addresses;
 using Baltaio.Location.Api.Infrastructure.Users.Authentication;
 using Baltaio.Location.Api.Infrastructure.Users.Persistance;
 using Baltaio.Location.Api.OpenApi;
@@ -36,7 +40,6 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<ICityRepository, CityRepository>();
     builder.Services.AddScoped<IStateRepository, StateRepository>();
     builder.Services.AddScoped<IFileRepository, FileRepository>();
-    builder.Services.AddScoped<IAddressRepository, AddressRepository>();
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
@@ -90,11 +93,11 @@ var app = builder.Build();
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
 
-    app.MapPost("api/v{version:apiVersion}/locations", () => Results.Ok())
+    app.MapPost("api/v{version:apiVersion}/locations", ([FromBody] CreateCityRequest request) => CreateAddressAsync(request))
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
-    app.MapGet("api/v{version:apiVersion}/locations/{id}", () => Results.Ok())
+    app.MapGet("api/v{version:apiVersion}/locations/{id}", ([FromRoute] int id) => GetAsync(id))
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
@@ -174,7 +177,47 @@ async Task<IResult> LoginAsync(LoginRequest request)
 
     return Results.Ok(output.Token);
 }
- 
+async Task<IResult> CreateAddressAsync(CreateCityRequest request)
+{
+    CreateCityInput input = new(request.IbgeCode, request.NameCity, request.StateCode);
+    var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<ICreateCityAppService>();
+
+    CreateCityOutput output = await service.ExecuteAsync(input);
+
+    if (output.Valid == false)
+    {
+        Dictionary<string, string[]> dictionary = new()
+        {
+            { string.Empty, new string[] { output.Message } }
+        };
+
+        return Results.ValidationProblem(dictionary);
+    }
+
+    return Results.CreatedAtRoute(nameof(GetAsync), new { id = request.IbgeCode }, null);
+}
+async Task<IResult> GetAsync(int id)
+{
+    var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IGetCityAppService>();
+    GetCityOutput output = await service.ExecuteAsync(id);
+
+    if (output.Valid == false)
+    {
+        Dictionary<string, string[]> dictionary = new()
+        {
+            { string.Empty, new string[] { output.Message } }
+        };
+
+        return Results.ValidationProblem(dictionary);
+    }
+    GetCityResponse GetCityResponse = new(output.IbgeCode, output.NameCity, output.StateCode)
+    {
+        IbgeCode = output.IbgeCode,
+        NameCity = output.NameCity,
+        StateCode = output.StateCode
+    };
+    return Results.Ok(GetCityResponse);
+}
 async Task<IResult> ImportData(IFormFile file)
 {
     var allowedContentTypes = new string[]

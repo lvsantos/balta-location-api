@@ -25,4 +25,8 @@
 		<InternalsVisibleTo Include="Baltaio.Location.Api.Tests" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Infrastructure\Addresses\" />
+	</ItemGroup>
+
 </Project>
