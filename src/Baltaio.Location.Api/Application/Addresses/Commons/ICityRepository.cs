@@ -11,4 +11,5 @@ public interface ICityRepository
 
     public Task<City?> GetAsync(string cityName);
     public Task<City?> GetByStateAsync(string stateAbbreviation);
+    public Task<City?> GetByStateOrCityAsync(string city, string state);
 }

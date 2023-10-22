@@ -1,5 +1,6 @@
 ﻿using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace Baltaio.Location.Api.Infrastructure.Persistance.Repositories;
 
@@ -28,6 +29,11 @@ internal class CityRepository : ICityRepository
     {
         City? city = _cities.GetValueOrDefault(ibgeCode);
         return Task.FromResult(city);
+    }
+    public Task<City?> GetByStateOrCityAsync(string stateName, string cityName)
+    {
+        var searchCity = _context.Cities.Where(c => c.Name == cityName || c.State.Name == stateName).FirstOrDefault();
+        return Task.FromResult(searchCity);
     }
 
     public Task<City?> GetAsync(string cityName)

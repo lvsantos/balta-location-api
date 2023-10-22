@@ -4,6 +4,7 @@ using Baltaio.Location.Api.Application.Addresses.CreateAddress;
 using Baltaio.Location.Api.Application.Addresses.CreateAddress.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.GetAddress;
 using Baltaio.Location.Api.Application.Addresses.GetAddress.Abstractions;
+using Baltaio.Location.Api.Application.Addresses.GetAdreessCityState;
 using Baltaio.Location.Api.Application.Data.Import.Commons;
 using Baltaio.Location.Api.Application.Data.Import.ImportData;
 using Baltaio.Location.Api.Application.Users.Abstractions;
@@ -68,6 +69,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<IRegisterUserAppService, RegisterUserAppService>();
     builder.Services.Configure<SaltSettings>(builder.Configuration.GetSection(SaltSettings.SECTION_NAME));
 
+    builder.Services.AddScoped<IGetCityStateAppService, GetCityStateAppService>();
     builder.Services.AddScoped<IImportDataAppService, ImportDataAppService>();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -112,8 +114,8 @@ var app = builder.Build();
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
-    app.MapGet("api/v{version:apiVersion}/locations", () => Results.Ok())
-        .RequireAuthorization()
+    app.MapGet("api/v{version:apiVersion}/locations", (string? cityName, string? stateName) => GetAllAsync(cityName, stateName))
+         //.RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
     app.MapPost("api/v{version:apiVersion}/locations/import-data", (IFormFile file) => ImportData(file))
@@ -221,6 +223,16 @@ async Task<IResult> GetAsync(int id)
     };
     return Results.Ok(GetCityResponse);
 }
+
+async Task<IResult> GetAllAsync(string city, string state)
+{
+    var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IGetCityStateAppService>();
+    GetCityStateOutput output = await service.ExecuteAsync(city, state);
+
+    return Results.Ok();
+}
+
+
 async Task<IResult> ImportData(IFormFile file)
 {
     var allowedContentTypes = new string[]
