@@ -12,9 +12,10 @@ public class StateRepository : IStateRepository
         _context = context;
     }
 
-    public Task AddAllAsync(IEnumerable<State> states)
+    public async Task AddAllAsync(IEnumerable<State> states)
     {
-        throw new NotImplementedException();
+        await _context.States.AddRangeAsync(states);
+        await _context.SaveChangesAsync();
     }
 
     public Task<List<State>?> GetAllAsync()
@@ -22,7 +23,7 @@ public class StateRepository : IStateRepository
         throw new NotImplementedException();
     }
 
-    public Task<State?> GetAsync(int stateCode)
+    public Task<State?> GetAsync(int stateCode, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
