@@ -12,22 +12,15 @@ internal class CityRepository : ICityRepository
         _context = context;
     }
 
-    private static Dictionary<int, City> _cities = new();
-
     public Task AddAllAsync(List<City> cities)
     {
         throw new NotImplementedException();
     }
 
-    public Task AddAsync(City city)
+    public async Task<City?> GetAsync(int ibgeCode, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<City?> GetAsync(int ibgeCode)
-    {
-        City? city = _cities.GetValueOrDefault(ibgeCode);
-        return Task.FromResult(city);
+        City? city = await _context.Cities.FindAsync(ibgeCode, cancellationToken);
+        return city;
     }
 
     public Task<City?> GetAsync(string cityName)
@@ -40,8 +33,8 @@ internal class CityRepository : ICityRepository
         throw new NotImplementedException();
     }
 
-    public Task<City?> SaveAsync(int IbgeCode, string NameCity, int StateCode)
+    public async Task SaveAsync(City city, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await _context.Cities.AddAsync(city, cancellationToken);
     }
 }

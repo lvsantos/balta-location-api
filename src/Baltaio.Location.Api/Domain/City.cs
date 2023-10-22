@@ -4,11 +4,11 @@ namespace Baltaio.Location.Api.Domain;
 
 public sealed class City
 {
-    public City(int code, string name, int stateCode, State state)
+    public City(int code, string name, State state)
     {
         Code = code;
         Name = name;
-        StateCode = stateCode;
+        StateCode = state.Code;
         State = state;
     }
     private City() { }
