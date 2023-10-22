@@ -9,4 +9,5 @@ public interface ICityRepository
     Task SaveAsync(City city, CancellationToken cancellationToken = default);
     Task<City?> GetAsync(int ibgeCode, CancellationToken cancellationToken = default);
     void Update(City city, CancellationToken cancellationToken = default);
+    Task<List<City>> GetByStateOrCityAsync(string cityName, string stateName);
 }

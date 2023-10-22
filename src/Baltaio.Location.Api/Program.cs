@@ -76,6 +76,8 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<IUpdateCityAppService, UpdateCityAppService>();
     builder.Services.AddScoped<IImportDataAppService, ImportDataAppService>();
 
+    builder.Services.AddScoped<IGetCityStateAppService, GetCityStateAppService>();
+
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
@@ -103,13 +105,14 @@ var app = builder.Build();
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
 
     app.MapPost("api/v{version:apiVersion}/locations", ([FromBody]CreateCityRequest request) => CreateAddressAsync(request))
-        .RequireAuthorization()
+        //.RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
-    app.MapGet("api/v{version:apiVersion}/locations/{id}", ([FromRoute] int id) => GetAsync(id))
+    app.MapGet("api/v{version:apiVersion}/locations/{id}", ([FromRoute] int id) => GetCity(id))
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
-        .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
+        .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0))
+        .WithName(nameof(GetCity));
     app.MapPut("api/v{version:apiVersion}/locations/{id}", ([FromBody] UpdateCityRequest request) => UpdateCityAsync(request))
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
@@ -123,7 +126,7 @@ var app = builder.Build();
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
     app.MapPost("api/v{version:apiVersion}/locations/import-data", (IFormFile file) => ImportData(file))
-        .RequireAuthorization()
+        //.RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
 
@@ -188,7 +191,7 @@ async Task<IResult> LoginAsync(LoginRequest request)
 }
 async Task<IResult> CreateAddressAsync(CreateCityRequest request)
 {
-    CreateCityInput input = new(request.IbgeCode, request.Name, request.StateCode);
+    CreateCityInput input = new(request.IbgeCode, request.NameCity, request.StateCode);
     var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<ICreateCityAppService>();
 
     CreateCityOutput output = await service.ExecuteAsync(input);
@@ -203,9 +206,9 @@ async Task<IResult> CreateAddressAsync(CreateCityRequest request)
         return Results.ValidationProblem(dictionary);
     }
 
-    return Results.CreatedAtRoute(nameof(GetAsync), new { id = request.IbgeCode }, null);
+    return Results.CreatedAtRoute(nameof(GetCity), new { id = request.IbgeCode }, null);
 }
-async Task<IResult> GetAsync(int id)
+async Task<IResult> GetCity(int id)
 {
     var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IGetCityAppService>();
     GetCityOutput output = await service.ExecuteAsync(id);
@@ -245,9 +248,21 @@ async Task<IResult> UpdateCityAsync(UpdateCityRequest request)
 async Task<IResult> GetAllAsync(string city, string state)
 {
     var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IGetCityStateAppService>();
-    GetCityStateOutput output = await service.ExecuteAsync(city, state);
-
-    return Results.Ok();
+    List<GetCityStateOutput> output = await service.ExecuteAsync(city, state);
+    var GetCityResponse = new GetCityResponse(null, string.Empty, null);
+    var lista = new List<GetCityResponse>();
+    foreach (var item in output)
+    {
+        GetCityResponse = new(item.IbgeCode, item.NameCity, item.StateCode)
+        {
+            IbgeCode = item.IbgeCode,
+            NameCity = item.NameCity,
+            StateCode = item.StateCode
+        };
+        lista.Add(GetCityResponse);
+    }
+   
+    return Results.Ok(lista);
 }
 
 

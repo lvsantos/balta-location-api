@@ -1,12 +1,15 @@
-﻿using Baltaio.Location.Api.Domain;
+﻿using Baltaio.Location.Api.Application.Addresses.GetAddress;
+using Baltaio.Location.Api.Domain;
 
 namespace Baltaio.Location.Api.Application.Addresses.GetAdreessCityState
 {
-    public record GetCityStateOutput(int? IbgeCode, string NameCity, string StateCode, bool Valid)
+    public record GetCityStateOutput(int? IbgeCode, string NameCity, int StateCode, bool Valid)
     {
-        public static GetCityStateOutput Validation() =>
-            new(null, string.Empty, string.Empty, false);
-        public static GetCityStateOutput Success(City city) =>
-            new(city.Code, city.Name, city.State.Abbreviation, true);
+        public static List<GetCityStateOutput> Success(List<City> city)
+        {
+            List<GetCityStateOutput> outputs = city.Select(c => new GetCityStateOutput(c.Code, c.Name, c.StateCode, true))
+                .ToList();
+            return outputs;
+        }
     }
 }
