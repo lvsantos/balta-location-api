@@ -1,7 +1,7 @@
 ﻿using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Domain;
 
-namespace Baltaio.Location.Api.Infrastructure
+namespace Baltaio.Location.Api.Infrastructure.Persistance.Repositories
 {
     public class StateRepository : IStateRepository
     {

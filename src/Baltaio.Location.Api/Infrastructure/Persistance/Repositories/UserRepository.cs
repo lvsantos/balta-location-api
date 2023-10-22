@@ -1,7 +1,7 @@
 ﻿using Baltaio.Location.Api.Application.Users.Abstractions;
 using Baltaio.Location.Api.Domain.Users;
 
-namespace Baltaio.Location.Api.Infrastructure.Users.Persistance;
+namespace Baltaio.Location.Api.Infrastructure.Persistance.Repositories;
 
 public class UserRepository : IUserRepository
 {

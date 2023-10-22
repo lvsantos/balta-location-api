@@ -1,4 +1,4 @@
-﻿namespace Baltaio.Location.Api.Infrastructure.Users.Authentication;
+﻿namespace Baltaio.Location.Api.Infrastructure.Authentication;
 
 internal class JwtSettings
 {

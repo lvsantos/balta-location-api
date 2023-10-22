@@ -7,7 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Baltaio.Location.Api.Infrastructure.Users.Authentication;
+namespace Baltaio.Location.Api.Infrastructure.Authentication;
 
 internal class JwtGenerator : IJwtGenerator
 {
@@ -24,7 +24,7 @@ internal class JwtGenerator : IJwtGenerator
 
         Claim[] claims = GetClaims(user);
         SigningCredentials signingCredentials = CreateSignature();
-        
+
         Token token = CreateToken(claims, signingCredentials);
 
         return token;
@@ -40,7 +40,7 @@ internal class JwtGenerator : IJwtGenerator
     }
     private SigningCredentials CreateSignature()
     {
-        byte[] key = Encoding.UTF8.GetBytes(_jwtSettings.Secret);    
+        byte[] key = Encoding.UTF8.GetBytes(_jwtSettings.Secret);
 
         SigningCredentials credentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
 

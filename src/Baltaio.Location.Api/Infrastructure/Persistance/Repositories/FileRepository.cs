@@ -2,7 +2,7 @@
 using Baltaio.Location.Api.Domain;
 using SpreadsheetLight;
 
-namespace Baltaio.Location.Api.Infrastructure
+namespace Baltaio.Location.Api.Infrastructure.Persistance.Repositories
 {
     public class FileRepository : IFileRepository
     {
