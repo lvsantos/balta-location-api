@@ -24,7 +24,7 @@ namespace Baltaio.Location.Api.Application.Data.Import.ImportData
             var states = _fileRepository.GetStates(source);
             await _stateRepository.AddAllAsync(states);
 
-            var cities = _fileRepository.GetCities(source);
+            var cities = _fileRepository.GetCities(source, states);
             await _cityRepository.AddAllAsync(cities);
 
             return new ImportDataOutput(states.Count, cities.Count);

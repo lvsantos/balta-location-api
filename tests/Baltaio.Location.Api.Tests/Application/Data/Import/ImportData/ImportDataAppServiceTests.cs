@@ -32,7 +32,7 @@ namespace Baltaio.Location.Api.Tests.Application.Data.Import.ImportData
             var file = new MemoryStream();
 
             _fileRepository.GetStates(file).Returns(new List<State>());
-            _fileRepository.GetCities(file).Returns(new List<City>());
+            _fileRepository.GetCities(file, Arg.Any<List<State>>()).Returns(new List<City>());
 
             // Act
             var importDataOutput = await _service.Execute(file);
@@ -52,7 +52,7 @@ namespace Baltaio.Location.Api.Tests.Application.Data.Import.ImportData
 
             State state = new State(31, "Minas Gerais", "MG");
             _fileRepository.GetStates(file).Returns(new List<State>() { state });
-            _fileRepository.GetCities(file).Returns(new List<City>() { new City(123, "Contagem", state)});
+            _fileRepository.GetCities(file, Arg.Any<List<State>>()).Returns(new List<City>() { new City(123, "Contagem", state)});
 
             // Act
             var importDataOutput = await _service.Execute(file);
