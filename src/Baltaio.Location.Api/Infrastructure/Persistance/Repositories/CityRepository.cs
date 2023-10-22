@@ -13,9 +13,10 @@ internal class CityRepository : ICityRepository
         _context = context;
     }
 
-    public Task AddAllAsync(List<City> cities)
+    public async Task AddAllAsync(List<City> cities)
     {
-        throw new NotImplementedException();
+        await _context.AddRangeAsync(cities);
+        await _context.SaveChangesAsync();
     }
 
     public async Task<City?> GetAsync(int ibgeCode, CancellationToken cancellationToken = default)
@@ -42,15 +43,6 @@ internal class CityRepository : ICityRepository
     public async Task SaveAsync(City city, CancellationToken cancellationToken = default)
     {
         await _context.Cities.AddAsync(city, cancellationToken);
-    }
-
-    public Task SaveAsync(City city, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<City?> GetAsync(int ibgeCode, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
+        await _context.SaveChangesAsync();
     }
 }
