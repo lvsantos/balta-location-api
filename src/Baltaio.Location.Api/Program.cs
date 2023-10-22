@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Baltaio.Location.Api.Application.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Application.Addresses.CreateCity;
 using Baltaio.Location.Api.Application.Addresses.CreateCity.Abstractions;
@@ -68,6 +69,7 @@ var builder = WebApplication.CreateBuilder(args);
         });
     builder.Services.AddScoped<IJwtGenerator, JwtGenerator>();
     builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSettings.SECTION_NAME));
+    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
     builder.Services.AddScoped<ILoginAppService, LoginAppService>();
     builder.Services.AddScoped<IRegisterUserAppService, RegisterUserAppService>();

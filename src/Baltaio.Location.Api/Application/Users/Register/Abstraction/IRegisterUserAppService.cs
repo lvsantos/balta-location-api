@@ -2,5 +2,5 @@
 
 public interface IRegisterUserAppService
 {
-    Task<RegisterUserOutput> ExecuteAsync(RegisterUserInput input);
+    Task<RegisterUserOutput> ExecuteAsync(RegisterUserInput input, CancellationToken cancellationToken = default);
 }

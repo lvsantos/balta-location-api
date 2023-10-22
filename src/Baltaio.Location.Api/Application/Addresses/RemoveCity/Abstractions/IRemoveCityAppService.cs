@@ -2,5 +2,5 @@
 
 public interface IRemoveCityAppService
 {
-    Task<RemoveCityOutput> ExecuteAsync(RemoveCityInput input);
+    Task<RemoveCityOutput> ExecuteAsync(RemoveCityInput input, CancellationToken cancellationToken = default);
 }

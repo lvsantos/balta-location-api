@@ -1,4 +1,5 @@
-﻿using Baltaio.Location.Api.Application.Addresses.Commons;
+﻿using Baltaio.Location.Api.Application.Abstractions;
+using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Application.Addresses.CreateCity;
 using Baltaio.Location.Api.Domain;
 using FluentAssertions;
@@ -10,6 +11,7 @@ public class CreateCityAppServiceTests
 {
     private readonly ICityRepository _cityRepository;
     private readonly IStateRepository _staterepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly CreateCityInput _input;
     private readonly City _city;
     private readonly State _state;
@@ -18,6 +20,7 @@ public class CreateCityAppServiceTests
     {
         _cityRepository = Substitute.For<ICityRepository>();
         _staterepository = Substitute.For<IStateRepository>();
+        _unitOfWork = Substitute.For<IUnitOfWork>();
         _input = new(2900207, "Belo Horizonte", 99);
         _state = new(_input.StateCode, "MG", "Minas Gerais");
         _city = new(_input.IbgeCode, _input.Name, _state);
@@ -30,7 +33,7 @@ public class CreateCityAppServiceTests
     {
         //Arrange
         CreateCityInput input = new(ibgeCode, name, stateCode);
-        CreateCityAppService service = new(_cityRepository, _staterepository);
+        CreateCityAppService service = new(_cityRepository, _staterepository, _unitOfWork);
 
         //Act
         CreateCityOutput output = await service.ExecuteAsync(input);
@@ -53,7 +56,7 @@ public class CreateCityAppServiceTests
         _staterepository
             .GetAsync(_input.StateCode)
             .Returns(_state);
-        CreateCityAppService service = new(_cityRepository, _staterepository);
+        CreateCityAppService service = new(_cityRepository, _staterepository, _unitOfWork);
 
         //Act
         CreateCityOutput output = await service.ExecuteAsync(_input);
@@ -74,7 +77,7 @@ public class CreateCityAppServiceTests
         _staterepository
             .GetAsync(_input.StateCode)
             .Returns((State?)null);
-        CreateCityAppService service = new(_cityRepository, _staterepository);
+        CreateCityAppService service = new(_cityRepository, _staterepository, _unitOfWork);
 
         //Act
         CreateCityOutput output = await service.ExecuteAsync(_input);
@@ -95,7 +98,7 @@ public class CreateCityAppServiceTests
         _staterepository
             .GetAsync(_input.StateCode)
             .Returns((State?)null);
-        CreateCityAppService service = new(_cityRepository, _staterepository);
+        CreateCityAppService service = new(_cityRepository, _staterepository, _unitOfWork);
 
         //Act
         CreateCityOutput output = await service.ExecuteAsync(_input);
@@ -118,7 +121,7 @@ public class CreateCityAppServiceTests
         _staterepository
             .GetAsync(_input.StateCode)
             .Returns(_state);
-        CreateCityAppService service = new(_cityRepository, _staterepository);
+        CreateCityAppService service = new(_cityRepository, _staterepository, _unitOfWork);
 
         //Act
         CreateCityOutput output = await service.ExecuteAsync(_input);
@@ -129,9 +132,11 @@ public class CreateCityAppServiceTests
         output.Errors.Should().BeEmpty();
         output.Id.Should().Be(_city.Code);
         _city.IsRemoved.Should().BeFalse();
-        await _cityRepository
+        _cityRepository
             .Received(1)
-            .UpdateAsync(Arg.Any<City>());
+            .Update(Arg.Any<City>());
+        await _unitOfWork.Received(1)
+            .CommitAsync(Arg.Any<CancellationToken>());
     }
     [Fact(DisplayName = "Deve salvar endereço no banco de dados se código do IBGE existir.")]
     public async Task Should_SaveAddress_When_IbgeCodeExists()
@@ -143,7 +148,7 @@ public class CreateCityAppServiceTests
         _staterepository
             .GetAsync(_input.StateCode)
             .Returns(_state);
-        CreateCityAppService service = new(_cityRepository, _staterepository);
+        CreateCityAppService service = new(_cityRepository, _staterepository, _unitOfWork);
 
         //Act
         CreateCityOutput result = await service.ExecuteAsync(_input);
@@ -156,5 +161,7 @@ public class CreateCityAppServiceTests
         await _cityRepository
             .Received(1)
             .SaveAsync(Arg.Any<City>());
+        await _unitOfWork.Received(1)
+            .CommitAsync(Arg.Any<CancellationToken>());
     }
 }

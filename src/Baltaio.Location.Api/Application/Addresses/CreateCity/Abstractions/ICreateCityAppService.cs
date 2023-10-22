@@ -2,5 +2,5 @@
 
 public interface ICreateCityAppService
 {
-    Task<CreateCityOutput> ExecuteAsync(CreateCityInput input);
+    Task<CreateCityOutput> ExecuteAsync(CreateCityInput input, CancellationToken cancellationToken = default);
 }
