@@ -4,7 +4,7 @@ using Baltaio.Location.Api.Domain;
 
 namespace Baltaio.Location.Api.Application.Addresses.GetAddress;
 
-public class GetCityAppService : IGetCityAppService
+internal class GetCityAppService : IGetCityAppService
 {
     private readonly ICityRepository _cityRepository;
 
@@ -15,7 +15,7 @@ public class GetCityAppService : IGetCityAppService
    
     public async Task<GetCityOutput> ExecuteAsync(int id)
     {
-        City? city = await _cityRepository.GetAsync(id);
+        City? city = await _cityRepository.GetWithState(id);
 
         if (city is null)
             return GetCityOutput.Validation();

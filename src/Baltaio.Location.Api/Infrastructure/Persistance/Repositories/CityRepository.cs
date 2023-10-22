@@ -43,6 +43,19 @@ internal class CityRepository : ICityRepository
     public async Task SaveAsync(City city, CancellationToken cancellationToken = default)
     {
         await _context.Cities.AddAsync(city, cancellationToken);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateAsync(City city, CancellationToken cancellationToken = default)
+    {
+        _context.Cities.Update(city);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+    public async Task<City?> GetWithState(int cityCode)
+    {
+        City? city = await _context.Cities
+            .Include(c => c.State)
+            .FirstOrDefaultAsync(c => c.Code == cityCode);
+        return city;
     }
 }

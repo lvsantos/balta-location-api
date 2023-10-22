@@ -15,8 +15,7 @@ namespace Baltaio.Location.Api.Migrations
                 name: "States",
                 columns: table => new
                 {
-                    Code = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<int>(type: "int", nullable: false),
                     Abbreviation = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -42,8 +41,7 @@ namespace Baltaio.Location.Api.Migrations
                 name: "Cities",
                 columns: table => new
                 {
-                    Code = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StateCode = table.Column<int>(type: "int", nullable: false)
                 },

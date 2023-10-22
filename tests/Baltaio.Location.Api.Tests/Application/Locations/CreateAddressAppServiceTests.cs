@@ -5,7 +5,7 @@ using FluentAssertions;
 using NSubstitute;
 using System.Runtime.CompilerServices;
 
-namespace Baltaio.Location.Api.Tests.Application.Addresses;
+namespace Baltaio.Location.Api.Tests.Application.Locations;
 
 public class CreateAddressAppServiceTests
 {

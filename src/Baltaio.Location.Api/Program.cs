@@ -4,6 +4,8 @@ using Baltaio.Location.Api.Application.Addresses.CreateAddress;
 using Baltaio.Location.Api.Application.Addresses.CreateAddress.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.GetAddress;
 using Baltaio.Location.Api.Application.Addresses.GetAddress.Abstractions;
+using Baltaio.Location.Api.Application.Addresses.UpdateCity;
+using Baltaio.Location.Api.Application.Addresses.UpdateCity.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.GetAdreessCityState;
 using Baltaio.Location.Api.Application.Data.Import.Commons;
 using Baltaio.Location.Api.Application.Data.Import.ImportData;
@@ -71,6 +73,9 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<IRegisterUserAppService, RegisterUserAppService>();
     builder.Services.Configure<SaltSettings>(builder.Configuration.GetSection(SaltSettings.SECTION_NAME));
 
+    builder.Services.AddScoped<ICreateCityAppService, CreateCityAppService>();
+    builder.Services.AddScoped<IGetCityAppService, GetCityAppService>();
+    builder.Services.AddScoped<IUpdateCityAppService, UpdateCityAppService>();
     builder.Services.AddScoped<IGetCityStateAppService, GetCityStateAppService>();
     builder.Services.AddScoped<IImportDataAppService, ImportDataAppService>();
 
@@ -125,15 +130,16 @@ var app = builder.Build();
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
 
-    app.MapPost("api/v{version:apiVersion}/locations", ([FromBody] CreateCityRequest request) => CreateAddressAsync(request))
+    app.MapPost("api/v{version:apiVersion}/locations", ([FromBody]CreateCityRequest request) => CreateCity(request))
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
-    app.MapGet("api/v{version:apiVersion}/locations/{id}", ([FromRoute] int id) => GetAsync(id))
+    app.MapGet("api/v{version:apiVersion}/locations/{id}", ([FromRoute] int id) => GetCity(id))
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
-        .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
-    app.MapPut("api/v{version:apiVersion}/locations/{id}", () => Results.Ok())
+        .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0))
+        .WithName(nameof(GetCity));
+    app.MapPut("api/v{version:apiVersion}/locations/{id}", ([FromBody] UpdateCityRequest request) => UpdateCityAsync(request))
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
@@ -146,7 +152,7 @@ var app = builder.Build();
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
     app.MapPost("api/v{version:apiVersion}/locations/import-data", (IFormFile file) => ImportData(file))
-        .RequireAuthorization()
+        //.RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
 
@@ -209,46 +215,46 @@ async Task<IResult> LoginAsync(LoginRequest request)
 
     return Results.Ok(output.Token);
 }
-async Task<IResult> CreateAddressAsync(CreateCityRequest request)
+async Task<IResult> CreateCity(CreateCityRequest request)
 {
     CreateCityInput input = new(request.IbgeCode, request.Name, request.StateCode);
     var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<ICreateCityAppService>();
 
     CreateCityOutput output = await service.ExecuteAsync(input);
 
-    if (output.Valid == false)
+    if (output.IsValid == false)
     {
-        Dictionary<string, string[]> dictionary = new()
-        {
-            { string.Empty, new string[] { output.Message } }
-        };
-
-        return Results.ValidationProblem(dictionary);
+        return Results.ValidationProblem(ConvertToValidationProblem(output.Errors));
     }
 
-    return Results.CreatedAtRoute(nameof(GetAsync), new { id = request.IbgeCode }, null);
+    return Results.CreatedAtRoute(nameof(GetCity), new { id = output.Id!.Value }, null);
 }
-async Task<IResult> GetAsync(int id)
+async Task<IResult> GetCity(int id)
 {
     var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IGetCityAppService>();
     GetCityOutput output = await service.ExecuteAsync(id);
 
-    if (output.Valid == false)
+    if (output.IsValid == false)
     {
-        Dictionary<string, string[]> dictionary = new()
-        {
-            { string.Empty, new string[] { output.Message } }
-        };
-
-        return Results.ValidationProblem(dictionary);
+        return Results.NotFound(ConvertToValidationProblem(new string[] { output.ErrorMessage }));
     }
-    GetCityResponse GetCityResponse = new(output.IbgeCode, output.NameCity, output.StateCode)
+
+    var getCityResponse = GetCityResponse.Create(output);
+    return Results.Ok(getCityResponse);
+}
+async Task<IResult> UpdateCityAsync(UpdateCityRequest request)
+{
+    UpdateCityInput input = request.ToInput();
+    var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IUpdateCityAppService>();
+
+    UpdateCityOutput output = await service.ExecuteAsync(input);
+
+    if (output.IsValid == false)
     {
-        IbgeCode = output.IbgeCode,
-        NameCity = output.NameCity,
-        StateCode = output.StateCode
-    };
-    return Results.Ok(GetCityResponse);
+        return Results.ValidationProblem(ConvertToValidationProblem(output.Errors));
+    }
+
+    return Results.NoContent();
 }
 
 async Task<IResult> GetAllAsync(string city, string state)
@@ -266,10 +272,20 @@ async Task<IResult> ImportData(IFormFile file)
         { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" };
 
     if (!allowedContentTypes.Contains(file.ContentType))
-        return Results.BadRequest("Tipo de arquivo inv·lido.");
+        return Results.BadRequest("Tipo de arquivo inv√°lido.");
 
     var importDataAppService = app.Services.CreateScope().ServiceProvider.GetRequiredService<IImportDataAppService>();
     var importedDataOutput = await importDataAppService.Execute(file.OpenReadStream());
 
     return Results.Accepted(null, importedDataOutput);
+}
+
+Dictionary<string, string[]> ConvertToValidationProblem(IEnumerable<string> notifications)
+{
+    Dictionary<string, string[]> dictionary = new()
+    {
+        { string.Empty, notifications.ToArray() }
+    };
+
+    return dictionary;
 }

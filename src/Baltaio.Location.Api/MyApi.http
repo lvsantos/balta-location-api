@@ -1,5 +1,6 @@
 # For more info on HTTP files go to https://aka.ms/vs/httpfile
 
+### Register user
 POST https://localhost:7033/api/v1/auth/register
 Content-Type: application/json
 Accept-Charset: utf-8
@@ -8,7 +9,8 @@ Accept-Charset: utf-8
   "email": "joao.silva@example.com",
   "password": "SenhaVálida123"
 }
-###
+
+### Login user
 POST https://localhost:7033/api/v1/auth/login
 Content-Type: application/json
 Accept-Charset: utf-8
@@ -17,31 +19,33 @@ Accept-Charset: utf-8
   "email": "joao.silva@example.com",
   "password": "SenhaVálida123"
 }
-###
+
+### Create location
 POST https://localhost:7033/api/v1/locations
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImU2YjhlMTA5LTI4MGMtNDY0Ni1hM2YxLTIwNmQ4MjdjZjYwOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5NzkxNDgxMywiZXhwIjoxNjk4MzQ2ODEzLCJpYXQiOjE2OTc5MTQ4MTMsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.78Ddf5hUoCrmrPMIq3Tzq1SsPV5vX_NVPKBcvHHWO50
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjlkYTIxODE3LWI5YzYtNGI3Zi05YTdhLTdkNDA1NWFiNGJkOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5Nzk4ODY1MCwiZXhwIjoxNjk4NDIwNjUwLCJpYXQiOjE2OTc5ODg2NTAsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.tScaApaFLdm6W626ivj6ZQryoX_u5IEL8_vZgbUPruI
+Content-Type: application/json
+Accept-Charset: utf-8
 
 {
-  IbgeCode: 123456,
-  Name: "São Paulo",
-  StateCode: "30"
+  "IbgeCode": 160951,
+  "Name": "São Paulo",
+  "StateCode": 35
 }
+### Get location
+GET https://localhost:7033/api/v1/locations/16951
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjlkYTIxODE3LWI5YzYtNGI3Zi05YTdhLTdkNDA1NWFiNGJkOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5Nzk4ODY1MCwiZXhwIjoxNjk4NDIwNjUwLCJpYXQiOjE2OTc5ODg2NTAsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.tScaApaFLdm6W626ivj6ZQryoX_u5IEL8_vZgbUPruI
 
-###
-POST https://localhost:7033/api/v1.1/locations
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImU2YjhlMTA5LTI4MGMtNDY0Ni1hM2YxLTIwNmQ4MjdjZjYwOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5NzkxNDgxMywiZXhwIjoxNjk4MzQ2ODEzLCJpYXQiOjE2OTc5MTQ4MTMsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.78Ddf5hUoCrmrPMIq3Tzq1SsPV5vX_NVPKBcvHHWO50
+### Update Location
+PUT https://localhost:7033/api/v1/locations/16951
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjlkYTIxODE3LWI5YzYtNGI3Zi05YTdhLTdkNDA1NWFiNGJkOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5Nzk4ODY1MCwiZXhwIjoxNjk4NDIwNjUwLCJpYXQiOjE2OTc5ODg2NTAsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.tScaApaFLdm6W626ivj6ZQryoX_u5IEL8_vZgbUPruI
+Content-Type: application/json
+Accept-Charset: utf-8
 
-###
-POST https://localhost:7033/api/v2.0/locations
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImU2YjhlMTA5LTI4MGMtNDY0Ni1hM2YxLTIwNmQ4MjdjZjYwOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5NzkxNDgxMywiZXhwIjoxNjk4MzQ2ODEzLCJpYXQiOjE2OTc5MTQ4MTMsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.78Ddf5hUoCrmrPMIq3Tzq1SsPV5vX_NVPKBcvHHWO50
-
-###
-GET https://localhost:7033/api/locations/9245fe4a-d402-451c-b9ed-9c1a04247482
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImU2YjhlMTA5LTI4MGMtNDY0Ni1hM2YxLTIwNmQ4MjdjZjYwOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5NzkxNDgxMywiZXhwIjoxNjk4MzQ2ODEzLCJpYXQiOjE2OTc5MTQ4MTMsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.78Ddf5hUoCrmrPMIq3Tzq1SsPV5vX_NVPKBcvHHWO50
-
-###
-PUT https://localhost:7033/api/locations/9245fe4a-d402-451c-b9ed-9c1a04247482
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImU2YjhlMTA5LTI4MGMtNDY0Ni1hM2YxLTIwNmQ4MjdjZjYwOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5NzkxNDgxMywiZXhwIjoxNjk4MzQ2ODEzLCJpYXQiOjE2OTc5MTQ4MTMsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.78Ddf5hUoCrmrPMIq3Tzq1SsPV5vX_NVPKBcvHHWO50
+{
+  "IbgeCode": 16951,
+  "Name": "São Paulo Teste",
+  "StateCode": 31
+}
 ###
 DELETE https://localhost:7033/api/locations/9245fe4a-d402-451c-b9ed-9c1a04247482
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImU2YjhlMTA5LTI4MGMtNDY0Ni1hM2YxLTIwNmQ4MjdjZjYwOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5NzkxNDgxMywiZXhwIjoxNjk4MzQ2ODEzLCJpYXQiOjE2OTc5MTQ4MTMsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.78Ddf5hUoCrmrPMIq3Tzq1SsPV5vX_NVPKBcvHHWO50
