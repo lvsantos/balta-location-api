@@ -1,4 +1,4 @@
-﻿namespace Baltaio.Location.Api.Application.Addresses.CreateAddress.Abstractions;
+﻿namespace Baltaio.Location.Api.Application.Addresses.CreateCity.Abstractions;
 
 public interface ICreateCityAppService
 {

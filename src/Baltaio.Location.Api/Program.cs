@@ -1,7 +1,7 @@
 using Asp.Versioning;
 using Baltaio.Location.Api.Application.Addresses.Commons;
-using Baltaio.Location.Api.Application.Addresses.CreateAddress;
-using Baltaio.Location.Api.Application.Addresses.CreateAddress.Abstractions;
+using Baltaio.Location.Api.Application.Addresses.CreateCity;
+using Baltaio.Location.Api.Application.Addresses.CreateCity.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.GetAddress;
 using Baltaio.Location.Api.Application.Addresses.GetAddress.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.RemoveCity;
@@ -21,7 +21,6 @@ using Baltaio.Location.Api.Infrastructure.Authentication;
 using Baltaio.Location.Api.Infrastructure.Persistance;
 using Baltaio.Location.Api.Infrastructure.Persistance.Repositories;
 using Baltaio.Location.Api.OpenApi;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

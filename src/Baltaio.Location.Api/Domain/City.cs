@@ -6,6 +6,11 @@ public sealed class City
 {
     public City(int code, string name, State state)
     {
+        ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
+        ArgumentNullException.ThrowIfNull(state, nameof(state));
+        if (code <= 0)
+            throw new ArgumentException("O código do IBGE deve ser maior que zero.", nameof(code));
+
         Code = code;
         Name = name;
         StateCode = state.Code;
@@ -28,7 +33,11 @@ public sealed class City
         IsRemoved = true;
         RemovedAt = DateTime.UtcNow;
     }
-
+    internal void Restore()
+    {
+        IsRemoved = false;
+        RemovedAt = null;
+    }
     internal void Update(string newName, State newState)
     {
         EnsureDataIsValid();

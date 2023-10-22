@@ -6,7 +6,7 @@ using NSubstitute;
 
 namespace Baltaio.Location.Api.Tests.Application.Locations;
 
-public class RemoveLocationAppServiceTests
+public class RemoveCityAppServiceTests
 {
     [Fact(DisplayName = "Deve retornar erro de validação quando código do ibge não existir")]
     public async Task Should_ReturnValidationError_When_IbgeCodeDoesNotExist()
@@ -19,7 +19,7 @@ public class RemoveLocationAppServiceTests
         RemoveCityAppService removeCityAppService = new(cityRepository);
 
         // Act
-        RemoveCityOutput output = await removeCityAppService.Execute(input);
+        RemoveCityOutput output = await removeCityAppService.ExecuteAsync(input);
 
         // Assert
         output.Should().NotBeNull();
@@ -40,7 +40,7 @@ public class RemoveLocationAppServiceTests
         RemoveCityAppService removeCityAppService = new(cityRepository);
 
         // Act
-        RemoveCityOutput output = await removeCityAppService.Execute(input);
+        RemoveCityOutput output = await removeCityAppService.ExecuteAsync(input);
 
         // Assert
         output.Should().NotBeNull();
@@ -60,7 +60,7 @@ public class RemoveLocationAppServiceTests
         RemoveCityAppService removeCityAppService = new(cityRepository);
 
         // Act
-        RemoveCityOutput output = await removeCityAppService.Execute(input);
+        RemoveCityOutput output = await removeCityAppService.ExecuteAsync(input);
 
         // Assert
         output.Should().NotBeNull();
