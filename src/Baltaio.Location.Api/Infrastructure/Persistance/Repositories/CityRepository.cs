@@ -50,4 +50,14 @@ internal class CityRepository : ICityRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task SaveAsync(City city, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<City?> GetAsync(int ibgeCode, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 }
