@@ -184,7 +184,7 @@ async Task<IResult> LoginAsync(LoginRequest request)
 }
 async Task<IResult> CreateAddressAsync(CreateCityRequest request)
 {
-    CreateCityInput input = new(request.IbgeCode, request.NameCity, request.StateCode);
+    CreateCityInput input = new(request.IbgeCode, request.Name, request.StateCode);
     var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<ICreateCityAppService>();
 
     CreateCityOutput output = await service.ExecuteAsync(input);

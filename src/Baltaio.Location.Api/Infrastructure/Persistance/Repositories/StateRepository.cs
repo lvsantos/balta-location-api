@@ -22,7 +22,7 @@ public class StateRepository : IStateRepository
         throw new NotImplementedException();
     }
 
-    public Task<State?> GetAsync(string stateAbbreviation)
+    public Task<State?> GetAsync(int stateCode)
     {
         throw new NotImplementedException();
     }

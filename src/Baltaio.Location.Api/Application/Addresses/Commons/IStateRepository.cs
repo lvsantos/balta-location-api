@@ -6,7 +6,7 @@ namespace Baltaio.Location.Api.Application.Addresses.Commons
     {
         Task AddAllAsync(IEnumerable<State> states);
 
-        Task<State?> GetAsync(string stateAbbreviation);
+        Task<State?> GetAsync(int stateCode);
 
         Task<List<State>?> GetAllAsync();
     }

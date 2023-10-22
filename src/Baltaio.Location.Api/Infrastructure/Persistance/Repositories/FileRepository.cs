@@ -31,7 +31,7 @@ namespace Baltaio.Location.Api.Infrastructure.Persistance.Repositories
                     (
                         document.GetCellValueAsInt32($"A{i}"),
                         document.GetCellValueAsString($"B{i}"),
-                        int.Parse(document.GetCellValueAsString($"C{i}")),
+                        //int.Parse(document.GetCellValueAsString($"C{i}")),
                         null
                     )
                 );

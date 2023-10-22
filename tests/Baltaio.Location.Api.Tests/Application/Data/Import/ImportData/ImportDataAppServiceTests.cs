@@ -50,8 +50,9 @@ namespace Baltaio.Location.Api.Tests.Application.Data.Import.ImportData
             // Arrange
             var file = new MemoryStream();
 
-            _fileRepository.GetStates(file).Returns(new List<State>() { new State(31, "Minas Gerais", "MG")});
-            _fileRepository.GetCities(file).Returns(new List<City>() { new City(123, "Contagem", "MG")});
+            State state = new State(31, "Minas Gerais", "MG");
+            _fileRepository.GetStates(file).Returns(new List<State>() { state });
+            _fileRepository.GetCities(file).Returns(new List<City>() { new City(123, "Contagem", state)});
 
             // Act
             var importDataOutput = await _service.Execute(file);

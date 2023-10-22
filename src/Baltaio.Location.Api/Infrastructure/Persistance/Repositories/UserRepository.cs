@@ -1,11 +1,11 @@
 ﻿using Baltaio.Location.Api.Application.Users.Abstractions;
 using Baltaio.Location.Api.Domain.Users;
+using Microsoft.EntityFrameworkCore;
 
 namespace Baltaio.Location.Api.Infrastructure.Persistance.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private static Dictionary<Guid, User> _users = new();
     private readonly ApplicationDbContext _context;
 
     public UserRepository(ApplicationDbContext context)
@@ -13,21 +13,21 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public Task<bool> ExistsAsync(string email)
+    public async Task<bool> ExistsAsync(string email, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(_users.Values.Any(u => u.Email == email));
+        bool exists = await _context.Users.AnyAsync(u => u.Email == email);
+        return exists;
     }
 
-    public Task<User?> LoginAsync(User userToSearch)
+    public async Task<User?> LoginAsync(User userToSearch, CancellationToken cancellationToken = default)
     {
-        User? user = _users
-            .Values
-            .FirstOrDefault(u => u.Email == userToSearch.Email && u.Password == userToSearch.Password);
-        return Task.FromResult(user);
+        User? user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Email == userToSearch.Email && u.Password == userToSearch.Password, cancellationToken);
+        return user;
     }
-    public Task SaveAsync(User user)
+    public async Task SaveAsync(User user, CancellationToken cancellationToken = default)
     {
-        _users.Add(user.Code, user);
-        return Task.CompletedTask;
+        await _context.Users.AddAsync(user);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }
