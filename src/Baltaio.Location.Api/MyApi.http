@@ -6,7 +6,7 @@ Content-Type: application/json
 Accept-Charset: utf-8
 
 {
-  "email": "joao.silva@example.com",
+  "email": "lucas.santos@example.com",
   "password": "SenhaVálida123"
 }
 
@@ -16,39 +16,39 @@ Content-Type: application/json
 Accept-Charset: utf-8
 
 {
-  "email": "joao.silva@example.com",
+  "email": "lucas.santos@example.com",
   "password": "SenhaVálida123"
 }
 
 ### Create location
 POST https://localhost:7033/api/v1/locations
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjlkYTIxODE3LWI5YzYtNGI3Zi05YTdhLTdkNDA1NWFiNGJkOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5Nzk4ODY1MCwiZXhwIjoxNjk4NDIwNjUwLCJpYXQiOjE2OTc5ODg2NTAsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.tScaApaFLdm6W626ivj6ZQryoX_u5IEL8_vZgbUPruI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjAyMzdhMTFmLWQwM2QtNGQwZS1hYmVjLWY0ZDc5NGY1MTY3YiIsImVtYWlsIjoibHVjYXMuc2FudG9zQGV4YW1wbGUuY29tIiwibmJmIjoxNjk4MDE1NjM1LCJleHAiOjE2OTg0NDc2MzUsImlhdCI6MTY5ODAxNTYzNSwiaXNzIjoiQmFsdGFpby5GaXJzdENoYWxsZW5nZSIsImF1ZCI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UifQ.jSdz0LKvltwpLxyOO1TPve4OvUR26LLMzMByNs4z-wo
 Content-Type: application/json
 Accept-Charset: utf-8
 
 {
-  "IbgeCode": 160951,
-  "Name": "São Paulo",
-  "StateCode": 35
+  "IbgeCode": 33842424,
+  "Name": "Manaus Do Leste",
+  "StateCode": 42
 }
 ### Get location
-GET https://localhost:7033/api/v1/locations/16951
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjlkYTIxODE3LWI5YzYtNGI3Zi05YTdhLTdkNDA1NWFiNGJkOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5Nzk4ODY1MCwiZXhwIjoxNjk4NDIwNjUwLCJpYXQiOjE2OTc5ODg2NTAsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.tScaApaFLdm6W626ivj6ZQryoX_u5IEL8_vZgbUPruI
+GET https://localhost:7033/api/v1/locations/33842424
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjAyMzdhMTFmLWQwM2QtNGQwZS1hYmVjLWY0ZDc5NGY1MTY3YiIsImVtYWlsIjoibHVjYXMuc2FudG9zQGV4YW1wbGUuY29tIiwibmJmIjoxNjk4MDE1NjM1LCJleHAiOjE2OTg0NDc2MzUsImlhdCI6MTY5ODAxNTYzNSwiaXNzIjoiQmFsdGFpby5GaXJzdENoYWxsZW5nZSIsImF1ZCI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UifQ.jSdz0LKvltwpLxyOO1TPve4OvUR26LLMzMByNs4z-wo
 
 ### Update Location
-PUT https://localhost:7033/api/v1/locations/16951
+PUT https://localhost:7033/api/v1/locations/33842424
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjlkYTIxODE3LWI5YzYtNGI3Zi05YTdhLTdkNDA1NWFiNGJkOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5Nzk4ODY1MCwiZXhwIjoxNjk4NDIwNjUwLCJpYXQiOjE2OTc5ODg2NTAsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.tScaApaFLdm6W626ivj6ZQryoX_u5IEL8_vZgbUPruI
 Content-Type: application/json
 Accept-Charset: utf-8
 
 {
-  "IbgeCode": 16951,
-  "Name": "São Paulo Teste",
-  "StateCode": 31
+  "IbgeCode": 33842424,
+  "Name": "São Paulo Do Oeste",
+  "StateCode": 26
 }
-###
-DELETE https://localhost:7033/api/locations/9245fe4a-d402-451c-b9ed-9c1a04247482
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImU2YjhlMTA5LTI4MGMtNDY0Ni1hM2YxLTIwNmQ4MjdjZjYwOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5NzkxNDgxMywiZXhwIjoxNjk4MzQ2ODEzLCJpYXQiOjE2OTc5MTQ4MTMsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.78Ddf5hUoCrmrPMIq3Tzq1SsPV5vX_NVPKBcvHHWO50
+### Remove Location
+DELETE https://localhost:7033/api/v1/locations/33842424
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjAyMzdhMTFmLWQwM2QtNGQwZS1hYmVjLWY0ZDc5NGY1MTY3YiIsImVtYWlsIjoibHVjYXMuc2FudG9zQGV4YW1wbGUuY29tIiwibmJmIjoxNjk4MDE1NjM1LCJleHAiOjE2OTg0NDc2MzUsImlhdCI6MTY5ODAxNTYzNSwiaXNzIjoiQmFsdGFpby5GaXJzdENoYWxsZW5nZSIsImF1ZCI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UifQ.jSdz0LKvltwpLxyOO1TPve4OvUR26LLMzMByNs4z-wo
 ###
 GET https://localhost:7033/api/locations
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImU2YjhlMTA5LTI4MGMtNDY0Ni1hM2YxLTIwNmQ4MjdjZjYwOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5NzkxNDgxMywiZXhwIjoxNjk4MzQ2ODEzLCJpYXQiOjE2OTc5MTQ4MTMsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.78Ddf5hUoCrmrPMIq3Tzq1SsPV5vX_NVPKBcvHHWO50

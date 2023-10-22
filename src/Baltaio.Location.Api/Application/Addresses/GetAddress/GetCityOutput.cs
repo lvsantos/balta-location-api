@@ -2,13 +2,14 @@
 
 namespace Baltaio.Location.Api.Application.Addresses.GetAddress;
 
-public record GetCityOutput(int? IbgeCode,
-        string CityName,
-        int? StateCode,
-        string StateAbreviation,
-        string Statename, 
-        bool IsValid, 
-        string ErrorMessage)
+public record GetCityOutput(
+    int? IbgeCode,
+    string CityName,
+    int? StateCode,
+    string StateAbreviation,
+    string StateName, 
+    bool IsValid, 
+    string ErrorMessage)
 {
     public static GetCityOutput Validation() =>
         new(
@@ -16,7 +17,7 @@ public record GetCityOutput(int? IbgeCode,
             CityName: string.Empty,
             StateCode: null,
             StateAbreviation: string.Empty,
-            Statename: string.Empty,
+            StateName: string.Empty,
             IsValid: false,
             ErrorMessage: "Cidade não encontrada.");
     public static GetCityOutput Success(City city) =>
@@ -25,7 +26,7 @@ public record GetCityOutput(int? IbgeCode,
             CityName: city.Name,
             StateCode: city.State.Code,
             StateAbreviation: city.State.Abbreviation,
-            Statename: city.State.Name,
+            StateName: city.State.Name,
             IsValid: true,
             ErrorMessage: string.Empty);
 }

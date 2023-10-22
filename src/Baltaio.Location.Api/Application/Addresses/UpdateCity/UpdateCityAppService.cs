@@ -1,7 +1,7 @@
-﻿using Baltaio.Location.Api.Application.Addresses.Commons;
+﻿using Baltaio.Location.Api.Application.Abstractions;
+using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Application.Addresses.UpdateCity.Abstractions;
 using Baltaio.Location.Api.Domain;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace Baltaio.Location.Api.Application.Addresses.UpdateCity;
 
@@ -9,14 +9,21 @@ internal class UpdateCityAppService : IUpdateCityAppService
 {
     private readonly ICityRepository _cityRepository;
     private readonly IStateRepository _stateRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateCityAppService(ICityRepository cityRepository, IStateRepository stateRepository)
+    public UpdateCityAppService(
+        ICityRepository cityRepository,
+        IStateRepository stateRepository,
+        IUnitOfWork unitOfWork)
     {
         _cityRepository = cityRepository;
         _stateRepository = stateRepository;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<UpdateCityOutput> ExecuteAsync(UpdateCityInput input, CancellationToken cancellationToken = default)
+    public async Task<UpdateCityOutput> ExecuteAsync(
+        UpdateCityInput input,
+        CancellationToken cancellationToken = default)
     {
         bool isValid = new UpdateCityInputValidation(input).IsValid;
         if(!isValid)
@@ -26,7 +33,7 @@ internal class UpdateCityAppService : IUpdateCityAppService
 
         List<string> errors = new();
         City? city = await _cityRepository.GetAsync(input.IbgeCode, cancellationToken);
-        if(city is null)
+        if(city is null || city.IsRemoved)
         {
             errors.Add("A cidade não existe.");
         }
@@ -41,7 +48,8 @@ internal class UpdateCityAppService : IUpdateCityAppService
         }
 
         city!.Update(input.Name, state!);
-        await _cityRepository.UpdateAsync(city, cancellationToken);
+        _cityRepository.Update(city);
+        await _unitOfWork.CommitAsync(cancellationToken);
 
         return UpdateCityOutput.Success();
     }

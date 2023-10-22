@@ -1,9 +1,12 @@
 using Asp.Versioning;
+using Baltaio.Location.Api.Application.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.Commons;
-using Baltaio.Location.Api.Application.Addresses.CreateAddress;
-using Baltaio.Location.Api.Application.Addresses.CreateAddress.Abstractions;
+using Baltaio.Location.Api.Application.Addresses.CreateCity;
+using Baltaio.Location.Api.Application.Addresses.CreateCity.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.GetAddress;
 using Baltaio.Location.Api.Application.Addresses.GetAddress.Abstractions;
+using Baltaio.Location.Api.Application.Addresses.RemoveCity;
+using Baltaio.Location.Api.Application.Addresses.RemoveCity.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.UpdateCity;
 using Baltaio.Location.Api.Application.Addresses.UpdateCity.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.GetAdreessCityState;
@@ -68,6 +71,7 @@ var builder = WebApplication.CreateBuilder(args);
         });
     builder.Services.AddScoped<IJwtGenerator, JwtGenerator>();
     builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSettings.SECTION_NAME));
+    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
     builder.Services.AddScoped<ILoginAppService, LoginAppService>();
     builder.Services.AddScoped<IRegisterUserAppService, RegisterUserAppService>();
@@ -76,6 +80,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<ICreateCityAppService, CreateCityAppService>();
     builder.Services.AddScoped<IGetCityAppService, GetCityAppService>();
     builder.Services.AddScoped<IUpdateCityAppService, UpdateCityAppService>();
+    builder.Services.AddScoped<IRemoveCityAppService, RemoveCityAppService>();
     builder.Services.AddScoped<IGetCityStateAppService, GetCityStateAppService>();
     builder.Services.AddScoped<IImportDataAppService, ImportDataAppService>();
 
@@ -143,7 +148,7 @@ var app = builder.Build();
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
-    app.MapDelete("api/v{version:apiVersion}/locations/{id}", () => Results.Ok())
+    app.MapDelete("api/v{version:apiVersion}/locations/{id}", (int id) => RemoveCity(id))
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
@@ -152,7 +157,7 @@ var app = builder.Build();
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
     app.MapPost("api/v{version:apiVersion}/locations/import-data", (IFormFile file) => ImportData(file))
-        //.RequireAuthorization()
+        .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
 
@@ -199,7 +204,7 @@ async Task<IResult> RegisterAsync(RegisterUserRequest request)
         return Results.BadRequest(output.Errors);
     }
 
-    return Results.Ok();
+    return Results.StatusCode(201);
 }
 async Task<IResult> LoginAsync(LoginRequest request)
 {
@@ -231,8 +236,9 @@ async Task<IResult> CreateCity(CreateCityRequest request)
 }
 async Task<IResult> GetCity(int id)
 {
+    GetCityInput input = new(id);
     var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IGetCityAppService>();
-    GetCityOutput output = await service.ExecuteAsync(id);
+    GetCityOutput output = await service.ExecuteAsync(input);
 
     if (output.IsValid == false)
     {
@@ -256,6 +262,20 @@ async Task<IResult> UpdateCityAsync(UpdateCityRequest request)
 
     return Results.NoContent();
 }
+async Task<IResult> RemoveCity(int id)
+{
+    RemoveCityInput input = new(id);
+    var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IRemoveCityAppService>();
+
+    RemoveCityOutput output = await service.ExecuteAsync(input);
+
+    if (output.IsValid == false)
+    {
+        return Results.NotFound(ConvertToValidationProblem(output.Errors));
+    }
+
+    return Results.NoContent();
+}
 
 async Task<IResult> GetAllAsync(string city, string state)
 {
@@ -264,7 +284,6 @@ async Task<IResult> GetAllAsync(string city, string state)
 
     return Results.Ok();
 }
-
 
 async Task<IResult> ImportData(IFormFile file)
 {
