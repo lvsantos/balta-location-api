@@ -37,4 +37,9 @@ internal class CityRepository : ICityRepository
     {
         await _context.Cities.AddAsync(city, cancellationToken);
     }
+
+    public void Update(City city, CancellationToken cancellationToken = default)
+    {
+        _context.Cities.Update(city);
+    }
 }

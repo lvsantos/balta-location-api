@@ -4,6 +4,8 @@ using Baltaio.Location.Api.Application.Addresses.CreateAddress;
 using Baltaio.Location.Api.Application.Addresses.CreateAddress.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.GetAddress;
 using Baltaio.Location.Api.Application.Addresses.GetAddress.Abstractions;
+using Baltaio.Location.Api.Application.Addresses.UpdateCity;
+using Baltaio.Location.Api.Application.Addresses.UpdateCity.Abstractions;
 using Baltaio.Location.Api.Application.Data.Import.Commons;
 using Baltaio.Location.Api.Application.Data.Import.ImportData;
 using Baltaio.Location.Api.Application.Users.Abstractions;
@@ -68,6 +70,9 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<IRegisterUserAppService, RegisterUserAppService>();
     builder.Services.Configure<SaltSettings>(builder.Configuration.GetSection(SaltSettings.SECTION_NAME));
 
+    builder.Services.AddScoped<ICreateCityAppService, CreateCityAppService>();
+    builder.Services.AddScoped<IGetCityAppService, GetCityAppService>();
+    builder.Services.AddScoped<IUpdateCityAppService, UpdateCityAppService>();
     builder.Services.AddScoped<IImportDataAppService, ImportDataAppService>();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -96,7 +101,7 @@ var app = builder.Build();
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
 
-    app.MapPost("api/v{version:apiVersion}/locations", ([FromBody] CreateCityRequest request) => CreateAddressAsync(request))
+    app.MapPost("api/v{version:apiVersion}/locations", ([FromBody]CreateCityRequest request) => CreateAddressAsync(request))
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
@@ -104,7 +109,7 @@ var app = builder.Build();
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
-    app.MapPut("api/v{version:apiVersion}/locations/{id}", () => Results.Ok())
+    app.MapPut("api/v{version:apiVersion}/locations/{id}", ([FromBody] UpdateCityRequest request) => UpdateCityAsync(request))
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
@@ -221,6 +226,20 @@ async Task<IResult> GetAsync(int id)
     };
     return Results.Ok(GetCityResponse);
 }
+async Task<IResult> UpdateCityAsync(UpdateCityRequest request)
+{
+    UpdateCityInput input = request.ToInput();
+    var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IUpdateCityAppService>();
+
+    UpdateCityOutput output = await service.ExecuteAsync(input);
+
+    if (output.IsValid == false)
+    {
+        return Results.ValidationProblem(ConvertToValidationProblem(output.Errors));
+    }
+
+    return Results.NoContent();
+}
 async Task<IResult> ImportData(IFormFile file)
 {
     var allowedContentTypes = new string[]
@@ -233,4 +252,16 @@ async Task<IResult> ImportData(IFormFile file)
     var importedDataOutput = await importDataAppService.Execute(file.OpenReadStream());
 
     return Results.Accepted(null, importedDataOutput);
+}
+
+Dictionary<string, string[]> ConvertToValidationProblem(IEnumerable<string> notifications)
+{
+    Dictionary<string, string[]> dictionary = new();
+
+    foreach (var notification in notifications)
+    {
+        dictionary.Add(string.Empty, new string[] { notification });
+    }
+
+    return dictionary;
 }
