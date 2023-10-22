@@ -21,7 +21,6 @@ public class CreateCityAppService : ICreateCityAppService
         if (city is not null)
             return  CreateCityOutput.Validation();
 
-
         State? state = await _stateRepository.GetAsync(input.StateCode);
         if(state is null)
             return CreateCityOutput.Validation();
