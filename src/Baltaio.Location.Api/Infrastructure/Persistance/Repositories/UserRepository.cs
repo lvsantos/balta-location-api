@@ -6,6 +6,12 @@ namespace Baltaio.Location.Api.Infrastructure.Persistance.Repositories;
 public class UserRepository : IUserRepository
 {
     private static Dictionary<Guid, User> _users = new();
+    private readonly ApplicationDbContext _context;
+
+    public UserRepository(ApplicationDbContext context)
+    {
+        _context = context;
+    }
 
     public Task<bool> ExistsAsync(string email)
     {
@@ -21,7 +27,7 @@ public class UserRepository : IUserRepository
     }
     public Task SaveAsync(User user)
     {
-        _users.Add(user.Id, user);
+        _users.Add(user.Code, user);
         return Task.CompletedTask;
     }
 }

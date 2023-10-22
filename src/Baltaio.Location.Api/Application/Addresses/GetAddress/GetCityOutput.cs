@@ -7,6 +7,6 @@ namespace Baltaio.Location.Api.Application.Addresses.GetAddress
         public static GetCityOutput Validation() =>
             new(null, string.Empty, string.Empty, false, "Id não encontrado");
         public static GetCityOutput Success(City city) =>
-            new(city.CityCode, city.CityName, city.StateAbbreviation, true, string.Empty);
+            new(city.Code, city.Name, city.State.Abbreviation, true, string.Empty);
     }
 }

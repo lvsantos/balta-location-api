@@ -5,12 +5,14 @@ namespace Baltaio.Location.Api.Infrastructure.Persistance.Repositories;
 
 internal class CityRepository : ICityRepository
 {
-    private static Dictionary<int, City> _cities = new()
+    private readonly ApplicationDbContext _context;
+
+    public CityRepository(ApplicationDbContext context)
     {
-        {5200050, new City(5200050, "Contagem", "MG")},
-        {3100104, new City(3100104, "BH", "MG")},
-        {5200100, new City(5200100, "Sete Lagoas", "MG")}
-    };
+        _context = context;
+    }
+
+    private static Dictionary<int, City> _cities = new();
 
     public Task AddAllAsync(List<City> cities)
     {

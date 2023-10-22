@@ -14,10 +14,12 @@ using Baltaio.Location.Api.Application.Users.Register.Abstraction;
 using Baltaio.Location.Api.Contracts.Cities;
 using Baltaio.Location.Api.Contracts.Users;
 using Baltaio.Location.Api.Infrastructure.Authentication;
+using Baltaio.Location.Api.Infrastructure.Persistance;
 using Baltaio.Location.Api.Infrastructure.Persistance.Repositories;
 using Baltaio.Location.Api.OpenApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -40,6 +42,8 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<IStateRepository, StateRepository>();
     builder.Services.AddScoped<IFileRepository, FileRepository>();
     builder.Services.AddScoped<IUserRepository, UserRepository>();
+    builder.Services.AddDbContext<ApplicationDbContext>(
+        options => options.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Balta.io.Location;Trusted_Connection=True;MultipleActiveResultSets=true"));
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {

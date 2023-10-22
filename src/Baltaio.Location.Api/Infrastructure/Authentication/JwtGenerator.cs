@@ -34,7 +34,7 @@ internal class JwtGenerator : IJwtGenerator
     {
         return new[]
         {
-            new Claim(ClaimTypes.Name, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Code.ToString()),
             new Claim(ClaimTypes.Email, user.Email)
         };
     }
