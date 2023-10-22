@@ -17,11 +17,13 @@ using Baltaio.Location.Api.Infrastructure.Authentication;
 using Baltaio.Location.Api.Infrastructure.Persistance;
 using Baltaio.Location.Api.Infrastructure.Persistance.Repositories;
 using Baltaio.Location.Api.OpenApi;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
 
@@ -73,7 +75,32 @@ var builder = WebApplication.CreateBuilder(args);
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-    builder.Services.AddSwaggerGen(option => option.OperationFilter<SwaggerDefaultValues>());
+    builder.Services.AddSwaggerGen(option =>
+    {
+        option.OperationFilter<SwaggerDefaultValues>();
+        var jwtSecurityScheme = new OpenApiSecurityScheme
+        {
+            BearerFormat = "JWT",
+            Name = "JWT Authentication",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = JwtBearerDefaults.AuthenticationScheme,
+            Description = "Insira somente o seu JWT Bearer token.",
+
+            Reference = new OpenApiReference
+            {
+                Id = JwtBearerDefaults.AuthenticationScheme,
+                Type = ReferenceType.SecurityScheme
+            }
+        };
+
+        option.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+        option.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            { jwtSecurityScheme, Array.Empty<string>() }
+        });
+    });
 }
 
 var app = builder.Build();
