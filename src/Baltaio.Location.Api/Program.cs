@@ -9,6 +9,7 @@ using Baltaio.Location.Api.Application.Addresses.RemoveCity;
 using Baltaio.Location.Api.Application.Addresses.RemoveCity.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.UpdateCity;
 using Baltaio.Location.Api.Application.Addresses.UpdateCity.Abstractions;
+using Baltaio.Location.Api.Application.Addresses.GetAdreessCityState;
 using Baltaio.Location.Api.Application.Data.Import.Commons;
 using Baltaio.Location.Api.Application.Data.Import.ImportData;
 using Baltaio.Location.Api.Application.Users.Abstractions;
@@ -22,6 +23,7 @@ using Baltaio.Location.Api.Infrastructure.Authentication;
 using Baltaio.Location.Api.Infrastructure.Persistance;
 using Baltaio.Location.Api.Infrastructure.Persistance.Repositories;
 using Baltaio.Location.Api.OpenApi;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -79,6 +81,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<IGetCityAppService, GetCityAppService>();
     builder.Services.AddScoped<IUpdateCityAppService, UpdateCityAppService>();
     builder.Services.AddScoped<IRemoveCityAppService, RemoveCityAppService>();
+    builder.Services.AddScoped<IGetCityStateAppService, GetCityStateAppService>();
     builder.Services.AddScoped<IImportDataAppService, ImportDataAppService>();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -149,8 +152,8 @@ var app = builder.Build();
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
-    app.MapGet("api/v{version:apiVersion}/locations", () => Results.Ok())
-        .RequireAuthorization()
+    app.MapGet("api/v{version:apiVersion}/locations", (string? cityName, string? stateName) => GetAllAsync(cityName, stateName))
+         //.RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
     app.MapPost("api/v{version:apiVersion}/locations/import-data", (IFormFile file) => ImportData(file))
@@ -273,13 +276,22 @@ async Task<IResult> RemoveCity(int id)
 
     return Results.NoContent();
 }
+
+async Task<IResult> GetAllAsync(string city, string state)
+{
+    var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IGetCityStateAppService>();
+    GetCityStateOutput output = await service.ExecuteAsync(city, state);
+
+    return Results.Ok();
+}
+
 async Task<IResult> ImportData(IFormFile file)
 {
     var allowedContentTypes = new string[]
         { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" };
 
     if (!allowedContentTypes.Contains(file.ContentType))
-        return Results.BadRequest("Tipo de arquivo inv·lido.");
+        return Results.BadRequest("Tipo de arquivo inv√°lido.");
 
     var importDataAppService = app.Services.CreateScope().ServiceProvider.GetRequiredService<IImportDataAppService>();
     var importedDataOutput = await importDataAppService.Execute(file.OpenReadStream());

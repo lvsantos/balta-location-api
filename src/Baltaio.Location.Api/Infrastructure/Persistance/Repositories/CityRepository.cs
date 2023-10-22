@@ -13,16 +13,21 @@ internal class CityRepository : ICityRepository
         _context = context;
     }
 
-    public Task AddAllAsync(List<City> cities)
+    public async Task AddAllAsync(List<City> cities)
     {
-        _context.Cities.AddRange(cities);
-        return _context.SaveChangesAsync();
+        await _context.AddRangeAsync(cities);
+        await _context.SaveChangesAsync();
     }
 
     public async Task<City?> GetAsync(int ibgeCode, CancellationToken cancellationToken = default)
     {
         City? city = await _context.Cities.FindAsync(ibgeCode, cancellationToken);
         return city;
+    }
+    public Task<City?> GetByStateOrCityAsync(string stateName, string cityName)
+    {
+        var searchCity = _context.Cities.Where(c => c.Name == cityName || c.State.Name == stateName).FirstOrDefault();
+        return Task.FromResult(searchCity);
     }
 
     public Task<City?> GetAsync(string cityName)
