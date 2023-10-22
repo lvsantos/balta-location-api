@@ -12,9 +12,10 @@ public class StateRepository : IStateRepository
         _context = context;
     }
 
-    public Task AddAllAsync(IEnumerable<State> states)
+    public async Task AddAllAsync(IEnumerable<State> states)
     {
-        throw new NotImplementedException();
+        await _context.States.AddRangeAsync(states);
+        await _context.SaveChangesAsync();
     }
 
     public Task<List<State>?> GetAllAsync()
