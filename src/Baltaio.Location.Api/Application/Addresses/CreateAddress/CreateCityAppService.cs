@@ -19,15 +19,15 @@ public class CreateCityAppService : ICreateCityAppService
     {
         City? city = await _cityRepository.GetAsync(input.IbgeCode);
         if (city is not null)
-            return  CreateCityOutput.Validation();
+            return  CreateCityOutput.ValidationError(new string[] {"Código já existente."});
 
         State? state = await _stateRepository.GetAsync(input.StateCode);
         if(state is null)
-            return CreateCityOutput.Validation();
+            return CreateCityOutput.ValidationError(new string[] { "Estado não encontrado." });
 
         City newCity = new(input.IbgeCode, input.Name, state);
         await _cityRepository.SaveAsync(newCity);
 
-        return CreateCityOutput.Success();        
+        return CreateCityOutput.Success(newCity);
     }
 }

@@ -23,8 +23,8 @@ public class StateRepository : IStateRepository
         throw new NotImplementedException();
     }
 
-    public Task<State?> GetAsync(int stateCode, CancellationToken cancellationToken = default)
+    public async Task<State?> GetAsync(int stateCode, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await _context.States.FindAsync(stateCode, cancellationToken);
     }
 }

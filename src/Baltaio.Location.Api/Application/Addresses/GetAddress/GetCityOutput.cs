@@ -1,12 +1,31 @@
 ﻿using Baltaio.Location.Api.Domain;
 
-namespace Baltaio.Location.Api.Application.Addresses.GetAddress
+namespace Baltaio.Location.Api.Application.Addresses.GetAddress;
+
+public record GetCityOutput(int? IbgeCode,
+        string CityName,
+        int? StateCode,
+        string StateAbreviation,
+        string Statename, 
+        bool IsValid, 
+        string ErrorMessage)
 {
-    public record GetCityOutput(int? IbgeCode, string NameCity, string StateCode, bool Valid, string Message)
-    {
-        public static GetCityOutput Validation() =>
-            new(null, string.Empty, string.Empty, false, "Id não encontrado");
-        public static GetCityOutput Success(City city) =>
-            new(city.Code, city.Name, city.State.Abbreviation, true, string.Empty);
-    }
+    public static GetCityOutput Validation() =>
+        new(
+            IbgeCode: null,
+            CityName: string.Empty,
+            StateCode: null,
+            StateAbreviation: string.Empty,
+            Statename: string.Empty,
+            IsValid: false,
+            ErrorMessage: "Cidade não encontrada.");
+    public static GetCityOutput Success(City city) =>
+        new(
+            IbgeCode: city.Code,
+            CityName: city.Name,
+            StateCode: city.State.Code,
+            StateAbreviation: city.State.Abbreviation,
+            Statename: city.State.Name,
+            IsValid: true,
+            ErrorMessage: string.Empty);
 }
