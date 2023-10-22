@@ -201,7 +201,7 @@ async Task<IResult> RegisterAsync(RegisterUserRequest request)
         return Results.BadRequest(output.Errors);
     }
 
-    return Results.Ok();
+    return Results.StatusCode(201);
 }
 async Task<IResult> LoginAsync(LoginRequest request)
 {
