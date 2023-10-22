@@ -7,12 +7,12 @@ using System.Runtime.CompilerServices;
 
 namespace Baltaio.Location.Api.Tests.Application.Locations;
 
-public class CreateAddressAppServiceTests
+public class CreateLocationAppServiceTests
 {
     private readonly ICityRepository _cityRepositoryMock;
     private readonly IStateRepository _staterepository;
 
-    public CreateAddressAppServiceTests()
+    public CreateLocationAppServiceTests()
     {
         _cityRepositoryMock = Substitute.For<ICityRepository>();
         _staterepository = Substitute.For<IStateRepository>();
@@ -35,7 +35,7 @@ public class CreateAddressAppServiceTests
         CreateCityOutput result = await service.ExecuteAsync(input);
 
         //Assert
-        result.Message.Should().Be("Código IBGE não encontrado.");
+        result.Errors.Should().Contain("Código IBGE não encontrado.");
         //result.AddressCode.Should().BeEmpty();
     }
     [Fact(DisplayName = "Deve salvar endereço no banco de dados se código do IBGE existir.")]
@@ -55,7 +55,7 @@ public class CreateAddressAppServiceTests
         CreateCityOutput result = await service.ExecuteAsync(input);
 
         //Assert
-        result.Message.Should().Be("Endereço criado com sucesso.");
+        result.Errors.Should().Contain("Endereço criado com sucesso.");
         //result.AddressCode.Should().NotBeEmpty();
         //await _addressRepositoryMock.Received(1).SaveAsync(Arg.Any<Address>());
     }

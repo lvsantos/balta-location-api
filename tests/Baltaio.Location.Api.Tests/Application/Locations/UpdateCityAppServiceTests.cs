@@ -37,31 +37,13 @@ public class UpdateCityAppServiceTests
         output.Errors.Should().Contain(x => x == "O nome da cidade é obrigatório.");
         output.Errors.Should().Contain(x => x == "O código do estado é obrigatório.");
     }
-    [Fact(DisplayName = "Deve retornar erro de validação quando a cidade não existir")]
+    [Fact(DisplayName = "Deve retornar erro de validação quando a cidade e o estado não existirrem")]
     [Trait("Application", "Locations")]
-    public async Task Should_ReturnValidationErrors_When_CityDoesNotExistAsync()
+    public async Task Should_ReturnValidationErrors_When_CityAndStateDoesNotExistAsync()
     {
         // Arrange
         UpdateCityInput input = new (1, "Contagem", 31);
         _cityRepository.GetAsync(input.IbgeCode).Returns((City?)null);
-        UpdateCityAppService service = new(_cityRepository, _stateRepository);
-
-        // Act
-        UpdateCityOutput output = await service.ExecuteAsync(input);
-
-        // Assert
-        output.Should().NotBeNull();
-        output.IsValid.Should().BeFalse();
-        output.Errors.Should().HaveCount(1);
-        output.Errors.Should().Contain(x => x == "A cidade não existe.");
-    }
-    [Fact(DisplayName = "Deve retornar erro de validação quando o estado não existir")]
-    [Trait("Application", "Locations")]
-    public async Task Should_ReturnValidationErrors_When_StateDoesNotExistAsync()
-    {
-        // Arrange
-        UpdateCityInput input = new (1, "Contagem", 31);
-        _cityRepository.GetAsync(input.IbgeCode).Returns(new City(1, "Contagem", new State(31, "Minas Gerais", "MG")));
         _stateRepository.GetAsync(input.StateCode).Returns((State?)null);
         UpdateCityAppService service = new(_cityRepository, _stateRepository);
 
@@ -71,7 +53,8 @@ public class UpdateCityAppServiceTests
         // Assert
         output.Should().NotBeNull();
         output.IsValid.Should().BeFalse();
-        output.Errors.Should().HaveCount(1);
+        output.Errors.Should().HaveCount(2);
+        output.Errors.Should().Contain(x => x == "A cidade não existe.");
         output.Errors.Should().Contain(x => x == "O estado não existe.");
     }
     [Fact(DisplayName = "Deve retornar válido quando os dados de atualização forem válidos")]

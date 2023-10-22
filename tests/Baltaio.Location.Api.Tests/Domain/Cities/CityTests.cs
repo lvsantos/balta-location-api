@@ -53,4 +53,38 @@ public class CityTests
                 .WithMessage($"Value cannot be null. (Parameter '{nameof(State)}')");
         }
     }
+
+    public class CityRemoveTests
+    {
+        [Fact(DisplayName = "Deve remover uma cidade")]
+        public void Should_RemoveCity()
+        {
+            // Arrange
+            City city = new(1, "São Paulo", new State(1, "SP", "São Paulo"));
+
+            // Act
+            city.Remove();
+
+            // Assert
+            city.IsRemoved.Should().BeTrue();
+            city.RemovedAt.Should().NotBeNull();
+            int oneSecond = 10_000_000;
+            city.RemovedAt.Should().BeCloseTo(DateTime.UtcNow, new TimeSpan(oneSecond));
+        }
+        [Fact(DisplayName = "Deve retornar exceção ao remover uma cidade já removida")]
+        public void Should_ThrowException_When_CityIsAlreadyRemoved()
+        {
+            // Arrange
+            City city = new(1, "São Paulo", new State(1, "SP", "São Paulo"));
+            city.Remove();
+
+            // Act
+            Action act = () => city.Remove();
+
+            // Assert
+            act.Should()
+                .Throw<InvalidOperationException>()
+                .WithMessage("A cidade já foi removida.");
+        }
+    }
 }

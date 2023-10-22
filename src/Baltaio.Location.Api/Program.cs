@@ -4,6 +4,8 @@ using Baltaio.Location.Api.Application.Addresses.CreateAddress;
 using Baltaio.Location.Api.Application.Addresses.CreateAddress.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.GetAddress;
 using Baltaio.Location.Api.Application.Addresses.GetAddress.Abstractions;
+using Baltaio.Location.Api.Application.Addresses.RemoveCity;
+using Baltaio.Location.Api.Application.Addresses.RemoveCity.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.UpdateCity;
 using Baltaio.Location.Api.Application.Addresses.UpdateCity.Abstractions;
 using Baltaio.Location.Api.Application.Data.Import.Commons;
@@ -75,6 +77,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<ICreateCityAppService, CreateCityAppService>();
     builder.Services.AddScoped<IGetCityAppService, GetCityAppService>();
     builder.Services.AddScoped<IUpdateCityAppService, UpdateCityAppService>();
+    builder.Services.AddScoped<IRemoveCityAppService, RemoveCityAppService>();
     builder.Services.AddScoped<IImportDataAppService, ImportDataAppService>();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -141,7 +144,7 @@ var app = builder.Build();
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
-    app.MapDelete("api/v{version:apiVersion}/locations/{id}", () => Results.Ok())
+    app.MapDelete("api/v{version:apiVersion}/locations/{id}", (int id) => RemoveCity(id))
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
@@ -150,7 +153,7 @@ var app = builder.Build();
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
     app.MapPost("api/v{version:apiVersion}/locations/import-data", (IFormFile file) => ImportData(file))
-        //.RequireAuthorization()
+        .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
 
@@ -250,6 +253,20 @@ async Task<IResult> UpdateCityAsync(UpdateCityRequest request)
     if (output.IsValid == false)
     {
         return Results.ValidationProblem(ConvertToValidationProblem(output.Errors));
+    }
+
+    return Results.NoContent();
+}
+async Task<IResult> RemoveCity(int id)
+{
+    RemoveCityInput input = new(id);
+    var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IRemoveCityAppService>();
+
+    RemoveCityOutput output = await service.ExecuteAsync(input);
+
+    if (output.IsValid == false)
+    {
+        return Results.NotFound(ConvertToValidationProblem(output.Errors));
     }
 
     return Results.NoContent();
