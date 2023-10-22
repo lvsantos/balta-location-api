@@ -3,6 +3,6 @@ using Baltaio.Location.Api.Application.Addresses.GetAdreessCityState;
 
 public interface IGetCityStateAppService
 {
-    Task<GetCityStateOutput> ExecuteAsync(string? cityName, string? stateName);
+    Task<List<GetCityStateOutput>> ExecuteAsync(string cityName, string stateName);
 }
 

@@ -10,6 +10,8 @@ using Baltaio.Location.Api.Application.Addresses.RemoveCity.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.UpdateCity;
 using Baltaio.Location.Api.Application.Addresses.UpdateCity.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.GetAdreessCityState;
+using Baltaio.Location.Api.Application.Addresses.UpdateCity;
+using Baltaio.Location.Api.Application.Addresses.UpdateCity.Abstractions;
 using Baltaio.Location.Api.Application.Data.Import.Commons;
 using Baltaio.Location.Api.Application.Data.Import.ImportData;
 using Baltaio.Location.Api.Application.Users.Abstractions;
@@ -84,6 +86,8 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<IGetCityStateAppService, GetCityStateAppService>();
     builder.Services.AddScoped<IImportDataAppService, ImportDataAppService>();
 
+    builder.Services.AddScoped<IGetCityStateAppService, GetCityStateAppService>();
+
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
@@ -134,7 +138,7 @@ var app = builder.Build();
     app.MapPost("api/v{version:apiVersion}/auth/login", ([FromBody] LoginRequest request) => LoginAsync(request))
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
-
+  
     app.MapPost("api/v{version:apiVersion}/locations", ([FromBody]CreateCityRequest request) => CreateCity(request))
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
@@ -157,7 +161,7 @@ var app = builder.Build();
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
     app.MapPost("api/v{version:apiVersion}/locations/import-data", (IFormFile file) => ImportData(file))
-        .RequireAuthorization()
+        //.RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
 
@@ -222,7 +226,7 @@ async Task<IResult> LoginAsync(LoginRequest request)
 }
 async Task<IResult> CreateCity(CreateCityRequest request)
 {
-    CreateCityInput input = new(request.IbgeCode, request.Name, request.StateCode);
+    CreateCityInput input = new(request.IbgeCode, request.NameCity, request.StateCode);
     var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<ICreateCityAppService>();
 
     CreateCityOutput output = await service.ExecuteAsync(input);
@@ -276,13 +280,39 @@ async Task<IResult> RemoveCity(int id)
 
     return Results.NoContent();
 }
+async Task<IResult> UpdateCityAsync(UpdateCityRequest request)
+{
+    UpdateCityInput input = request.ToInput();
+    var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IUpdateCityAppService>();
+
+    UpdateCityOutput output = await service.ExecuteAsync(input);
+
+    if (output.IsValid == false)
+    {
+        return Results.ValidationProblem(ConvertToValidationProblem(output.Errors));
+    }
+
+    return Results.NoContent();
+}
 
 async Task<IResult> GetAllAsync(string city, string state)
 {
     var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IGetCityStateAppService>();
-    GetCityStateOutput output = await service.ExecuteAsync(city, state);
-
-    return Results.Ok();
+    List<GetCityStateOutput> output = await service.ExecuteAsync(city, state);
+    var GetCityResponse = new GetCityResponse(null, string.Empty, null);
+    var lista = new List<GetCityResponse>();
+    foreach (var item in output)
+    {
+        GetCityResponse = new(item.IbgeCode, item.NameCity, item.StateCode)
+        {
+            IbgeCode = item.IbgeCode,
+            NameCity = item.NameCity,
+            StateCode = item.StateCode
+        };
+        lista.Add(GetCityResponse);
+    }
+   
+    return Results.Ok(lista);
 }
 
 async Task<IResult> ImportData(IFormFile file)
@@ -305,6 +335,5 @@ Dictionary<string, string[]> ConvertToValidationProblem(IEnumerable<string> noti
     {
         { string.Empty, notifications.ToArray() }
     };
-
     return dictionary;
 }

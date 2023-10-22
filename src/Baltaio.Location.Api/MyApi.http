@@ -7,7 +7,7 @@ Accept-Charset: utf-8
 
 {
   "email": "lucas.santos@example.com",
-  "password": "SenhaVálida123"
+  "password": "SenhaVÃ¡lida123"
 }
 
 ### Login user
@@ -17,7 +17,7 @@ Accept-Charset: utf-8
 
 {
   "email": "lucas.santos@example.com",
-  "password": "SenhaVálida123"
+  "password": "SenhaVÃ¡lida123"
 }
 
 ### Create location
@@ -27,9 +27,9 @@ Content-Type: application/json
 Accept-Charset: utf-8
 
 {
-  "IbgeCode": 33842424,
-  "Name": "Manaus Do Leste",
-  "StateCode": 42
+  "IbgeCode": 123456,
+  "Name": "SÃ£o Paulo",
+  "StateCode": 30
 }
 ### Get location
 GET https://localhost:7033/api/v1/locations/33842424
@@ -42,8 +42,15 @@ Content-Type: application/json
 Accept-Charset: utf-8
 
 {
+  "IbgeCode": 123456,
+  "Name": "SÃ£o Paulo",
+  "StateCode": "30"
+}
+###
+DELETE https://localhost:7033/api/locations/9245fe4a-d402-451c-b9ed-9c1a04247482
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImU2YjhlMTA5LTI4MGMtNDY0Ni1hM2YxLTIwNmQ4MjdjZjYwOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5NzkxNDgxMywiZXhwIjoxNjk4MzQ2ODEzLCJpYXQiOjE2OTc5MTQ4MTMsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.78Ddf5hUoCrmrPMIq3Tzq1SsPV5vX_NVPKBcvHHWO50
   "IbgeCode": 33842424,
-  "Name": "São Paulo Do Oeste",
+  "Name": "SÃ£o Paulo Do Oeste",
   "StateCode": 26
 }
 ### Remove Location

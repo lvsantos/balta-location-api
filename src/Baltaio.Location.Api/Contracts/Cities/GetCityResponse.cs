@@ -17,5 +17,4 @@ namespace Baltaio.Location.Api.Contracts.Cities
                 StateAbreviation: output.StateAbreviation,
                 Statename: output.StateName);
     }
-
 }

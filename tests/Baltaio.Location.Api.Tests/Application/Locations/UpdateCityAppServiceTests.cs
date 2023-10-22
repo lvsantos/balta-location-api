@@ -1,3 +1,4 @@
+﻿using Baltaio.Location.Api.Application.Addresses.Commons;
 ﻿using Baltaio.Location.Api.Application.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Application.Addresses.UpdateCity;
@@ -57,6 +58,18 @@ public class UpdateCityAppServiceTests
         // Assert
         output.Should().NotBeNull();
         output.IsValid.Should().BeFalse();
+        output.Errors.Should().HaveCount(1);
+        output.Errors.Should().Contain(x => x == "A cidade não existe.");
+    }
+    [Fact(DisplayName = "Deve retornar erro de validação quando o estado não existir")]
+    [Trait("Application", "Locations")]
+    public async Task Should_ReturnValidationErrors_When_StateDoesNotExistAsync()
+    {
+        // Arrange
+        UpdateCityInput input = new (1, "Contagem", 31);
+        _cityRepository.GetAsync(input.IbgeCode).Returns(new City(1, "Contagem", new State(31, "Minas Gerais", "MG")));
+        _stateRepository.GetAsync(input.StateCode).Returns((State?)null);
+        UpdateCityAppService service = new(_cityRepository, _stateRepository);
         output.Errors.Should().HaveCount(2);
         output.Errors.Should().Contain(x => x == "A cidade não existe.");
         output.Errors.Should().Contain(x => x == "O estado não existe.");

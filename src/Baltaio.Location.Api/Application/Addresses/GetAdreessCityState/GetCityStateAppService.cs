@@ -12,14 +12,11 @@ namespace Baltaio.Location.Api.Application.Addresses.GetAdreessCityState
             _cityRepository = cityRepository;
         }
        
-        public async Task<GetCityStateOutput> ExecuteAsync(string cityName, string stateName)
+        public async Task<List<GetCityStateOutput>> ExecuteAsync(string cityName, string stateName)
         {
-            City? city = await _cityRepository.GetByStateOrCityAsync(cityName, stateName);
+            List<City> city = await _cityRepository.GetByStateOrCityAsync(cityName, stateName);
 
-            if (city is null)
-                return GetCityStateOutput.Validation();
-
-            return GetCityStateOutput.Success(city);
+            return GetCityStateOutput.Success(city) ;
         }
     }
 }

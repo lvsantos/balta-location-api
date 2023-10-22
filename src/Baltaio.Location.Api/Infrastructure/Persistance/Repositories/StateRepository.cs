@@ -1,5 +1,6 @@
 ﻿using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace Baltaio.Location.Api.Infrastructure.Persistance.Repositories;
 
@@ -25,6 +26,8 @@ public class StateRepository : IStateRepository
 
     public async Task<State?> GetAsync(int stateCode, CancellationToken cancellationToken = default)
     {
-        return await _context.States.FindAsync(stateCode, cancellationToken);
+        State ? state = await _context.States.FindAsync(stateCode, cancellationToken);
+        return state;
     }
 }
+
