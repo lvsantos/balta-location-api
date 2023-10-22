@@ -1,7 +1,6 @@
 ﻿using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Application.Addresses.UpdateCity.Abstractions;
 using Baltaio.Location.Api.Domain;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace Baltaio.Location.Api.Application.Addresses.UpdateCity;
 
@@ -26,7 +25,7 @@ internal class UpdateCityAppService : IUpdateCityAppService
 
         List<string> errors = new();
         City? city = await _cityRepository.GetAsync(input.IbgeCode, cancellationToken);
-        if(city is null)
+        if(city is null || city.IsRemoved)
         {
             errors.Add("A cidade não existe.");
         }

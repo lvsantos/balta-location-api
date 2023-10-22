@@ -37,7 +37,7 @@ public class UpdateCityAppServiceTests
         output.Errors.Should().Contain(x => x == "O nome da cidade é obrigatório.");
         output.Errors.Should().Contain(x => x == "O código do estado é obrigatório.");
     }
-    [Fact(DisplayName = "Deve retornar erro de validação quando a cidade e o estado não existirrem")]
+    [Fact(DisplayName = "Deve retornar erro de validação quando a cidade e o estado não existirem")]
     [Trait("Application", "Locations")]
     public async Task Should_ReturnValidationErrors_When_CityAndStateDoesNotExistAsync()
     {
@@ -57,6 +57,31 @@ public class UpdateCityAppServiceTests
         output.Errors.Should().Contain(x => x == "A cidade não existe.");
         output.Errors.Should().Contain(x => x == "O estado não existe.");
     }
+    [Fact(DisplayName = "Deve retornar erro de validação quando a cidade atualizada tiver sido removida logicamente")]
+    [Trait("Application", "Locations")]
+    public async Task Should_ReturnValidationErrors_When_CityIsDeletedAsync()
+    {
+        // Arrange
+        UpdateCityInput input = new (1, "Contagem", 31);
+        State state = new State(31, "Minas Gerais", "MG");
+        City city = new City(1, "Contagem", state);
+        city.Remove();
+        _cityRepository.GetAsync(input.IbgeCode)
+            .Returns(city);
+        _stateRepository
+            .GetAsync(input.StateCode)
+            .Returns(state);
+        UpdateCityAppService service = new(_cityRepository, _stateRepository);
+
+        // Act
+        UpdateCityOutput output = await service.ExecuteAsync(input);
+
+        // Assert
+        output.Should().NotBeNull();
+        output.IsValid.Should().BeFalse();
+        output.Errors.Should().HaveCount(1);
+        output.Errors.Should().Contain(x => x == "A cidade não existe.");
+    }
     [Fact(DisplayName = "Deve retornar válido quando os dados de atualização forem válidos")]
     [Trait("Application", "Locations")]
     public async Task Should_ReturnValid_When_InputIsValidAsync()
@@ -74,5 +99,7 @@ public class UpdateCityAppServiceTests
         output.Should().NotBeNull();
         output.IsValid.Should().BeTrue();
         output.Errors.Should().BeEmpty();
+        await _cityRepository.Received(1)
+            .UpdateAsync(Arg.Any<City>(), Arg.Any<CancellationToken>());
     }
 }

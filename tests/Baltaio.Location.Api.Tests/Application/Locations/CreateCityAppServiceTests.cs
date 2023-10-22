@@ -2,7 +2,6 @@
 using Baltaio.Location.Api.Application.Addresses.CreateCity;
 using Baltaio.Location.Api.Domain;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
 using NSubstitute;
 
 namespace Baltaio.Location.Api.Tests.Application.Locations;
