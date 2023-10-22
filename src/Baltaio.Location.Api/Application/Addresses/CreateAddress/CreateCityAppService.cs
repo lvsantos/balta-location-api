@@ -1,17 +1,16 @@
 ﻿using Baltaio.Location.Api.Application.Addresses.Commons;
+using Baltaio.Location.Api.Application.Addresses.CreateAddress.Abstractions;
 using Baltaio.Location.Api.Domain;
 
 namespace Baltaio.Location.Api.Application.Addresses.CreateAddress;
 
-public class CreateCityAppService
+public class CreateCityAppService : ICreateCityAppService
 {
     private readonly ICityRepository _cityRepository;
-    private readonly IAddressRepository _addressRepository;
 
-    public CreateCityAppService(ICityRepository cityRepository, IAddressRepository addressRepository)
+    public CreateCityAppService(ICityRepository cityRepository)
     {
         _cityRepository = cityRepository;
-        _addressRepository = addressRepository;
     }
 
     public async Task<CreateCityOutput> ExecuteAsync(CreateCityInput input)

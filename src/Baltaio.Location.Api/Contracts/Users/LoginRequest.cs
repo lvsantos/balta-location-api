@@ -1,3 +1,3 @@
-﻿namespace Baltaio.Location.Api.Controllers.Users;
+﻿namespace Baltaio.Location.Api.Contracts.Users;
 
 public record LoginRequest(string Email, string Password);

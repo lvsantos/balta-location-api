@@ -1,27 +1,25 @@
 ﻿using Baltaio.Location.Api.Application.Addresses.Commons;
+using Baltaio.Location.Api.Application.Addresses.GetAddress.Abstractions;
 using Baltaio.Location.Api.Domain;
 
-namespace Baltaio.Location.Api.Application.Addresses.GetAddress
+namespace Baltaio.Location.Api.Application.Addresses.GetAddress;
+
+public class GetCityAppService : IGetCityAppService
 {
-    public class GetCityAppService
+    private readonly ICityRepository _cityRepository;
+
+    public GetCityAppService(ICityRepository cityRepository)
     {
-        private readonly ICityRepository _cityRepository;
-        private readonly IAddressRepository _addressRepository;
+        _cityRepository = cityRepository;
+    }
+   
+    public async Task<GetCityOutput> ExecuteAsync(int id)
+    {
+        City? city = await _cityRepository.GetAsync(id);
 
-        public GetCityAppService(ICityRepository cityRepository, IAddressRepository addressRepository)
-        {
-            _cityRepository = cityRepository;
-            _addressRepository = addressRepository;
-        }
-       
-        public async Task<GetCityOutput> ExecuteAsync(int id)
-        {
-            City? city = await _cityRepository.GetAsync(id);
+        if (city is null)
+            return GetCityOutput.Validation();
 
-            if (city is null)
-                return GetCityOutput.Validation();
-
-            return GetCityOutput.Success(city);
-        }
+        return GetCityOutput.Success(city);
     }
 }
