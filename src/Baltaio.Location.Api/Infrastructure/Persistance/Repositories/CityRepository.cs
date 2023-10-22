@@ -54,7 +54,18 @@ internal class CityRepository : ICityRepository
     public async Task SaveAsync(City city, CancellationToken cancellationToken = default)
     {
         await _context.Cities.AddAsync(city, cancellationToken);
-        await _context.SaveChangesAsync();
+    }
+
+    public void Update(City city)
+    {
+        _context.Cities.Update(city);
+    }
+    public async Task<City?> GetWithState(int cityCode)
+    {
+        City? city = await _context.Cities
+            .Include(c => c.State)
+            .FirstOrDefaultAsync(c => c.Code == cityCode);
+        return city;
     }
 
     public void Update(City city, CancellationToken cancellationToken = default)
