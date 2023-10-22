@@ -1,6 +1,5 @@
 ﻿using Baltaio.Location.Api.Application.Addresses.Commons;
-﻿using Baltaio.Location.Api.Application.Abstractions;
-using Baltaio.Location.Api.Application.Addresses.Commons;
+using Baltaio.Location.Api.Application.Abstractions;
 using Baltaio.Location.Api.Application.Addresses.UpdateCity;
 using Baltaio.Location.Api.Domain;
 using FluentAssertions;
@@ -69,7 +68,12 @@ public class UpdateCityAppServiceTests
         UpdateCityInput input = new (1, "Contagem", 31);
         _cityRepository.GetAsync(input.IbgeCode).Returns(new City(1, "Contagem", new State(31, "Minas Gerais", "MG")));
         _stateRepository.GetAsync(input.StateCode).Returns((State?)null);
-        UpdateCityAppService service = new(_cityRepository, _stateRepository);
+        UpdateCityAppService service = new(_cityRepository, _stateRepository, _unitOfWork);
+
+        //Act
+        UpdateCityOutput output = await service.ExecuteAsync(input);
+
+        // Assert
         output.Errors.Should().HaveCount(2);
         output.Errors.Should().Contain(x => x == "A cidade não existe.");
         output.Errors.Should().Contain(x => x == "O estado não existe.");

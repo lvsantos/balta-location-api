@@ -280,39 +280,14 @@ async Task<IResult> RemoveCity(int id)
 
     return Results.NoContent();
 }
-async Task<IResult> UpdateCityAsync(UpdateCityRequest request)
-{
-    UpdateCityInput input = request.ToInput();
-    var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IUpdateCityAppService>();
-
-    UpdateCityOutput output = await service.ExecuteAsync(input);
-
-    if (output.IsValid == false)
-    {
-        return Results.ValidationProblem(ConvertToValidationProblem(output.Errors));
-    }
-
-    return Results.NoContent();
-}
 
 async Task<IResult> GetAllAsync(string city, string state)
 {
     var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IGetCityStateAppService>();
     List<GetCityStateOutput> output = await service.ExecuteAsync(city, state);
-    var GetCityResponse = new GetCityResponse(null, string.Empty, null);
-    var lista = new List<GetCityResponse>();
-    foreach (var item in output)
-    {
-        GetCityResponse = new(item.IbgeCode, item.NameCity, item.StateCode)
-        {
-            IbgeCode = item.IbgeCode,
-            NameCity = item.NameCity,
-            StateCode = item.StateCode
-        };
-        lista.Add(GetCityResponse);
-    }
+    var getCityResponse = GetCityResponse.Create(output);
    
-    return Results.Ok(lista);
+    return Results.Ok(getCityResponse);
 }
 
 async Task<IResult> ImportData(IFormFile file)
