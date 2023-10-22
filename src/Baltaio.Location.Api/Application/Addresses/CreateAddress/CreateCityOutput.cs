@@ -1,8 +1,10 @@
-﻿namespace Baltaio.Location.Api.Application.Addresses.CreateAddress;
-public record CreateCityOutput(int? Id, bool Valid, string Message)
+﻿using Baltaio.Location.Api.Domain;
+
+namespace Baltaio.Location.Api.Application.Addresses.CreateAddress;
+public record CreateCityOutput(int? Id, bool IsValid, IEnumerable<string> Errors)
 {
-    public static CreateCityOutput Validation() =>
-        new(null, false, "Código IBGE ja existe");
-    public static CreateCityOutput Success() =>
-        new(null, true, string.Empty);
+    public static CreateCityOutput ValidationError(IEnumerable<string> errors) =>
+        new(null, false, errors);
+    public static CreateCityOutput Success(City city) =>
+        new(city.Code, true, Enumerable.Empty<string>());
 }

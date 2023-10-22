@@ -1,5 +1,6 @@
 ﻿using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace Baltaio.Location.Api.Infrastructure.Persistance.Repositories;
 
@@ -14,7 +15,8 @@ internal class CityRepository : ICityRepository
 
     public Task AddAllAsync(List<City> cities)
     {
-        throw new NotImplementedException();
+        _context.Cities.AddRange(cities);
+        return _context.SaveChangesAsync();
     }
 
     public async Task<City?> GetAsync(int ibgeCode, CancellationToken cancellationToken = default)
@@ -36,5 +38,19 @@ internal class CityRepository : ICityRepository
     public async Task SaveAsync(City city, CancellationToken cancellationToken = default)
     {
         await _context.Cities.AddAsync(city, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateAsync(City city, CancellationToken cancellationToken = default)
+    {
+        _context.Cities.Update(city);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+    public async Task<City?> GetWithState(int cityCode)
+    {
+        City? city = await _context.Cities
+            .Include(c => c.State)
+            .FirstOrDefaultAsync(c => c.Code == cityCode);
+        return city;
     }
 }
