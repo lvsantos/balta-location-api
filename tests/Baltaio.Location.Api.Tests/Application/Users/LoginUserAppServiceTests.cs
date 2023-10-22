@@ -2,7 +2,7 @@
 using Baltaio.Location.Api.Application.Users.Login;
 using Baltaio.Location.Api.Application.Users.Login.Abstractions;
 using Baltaio.Location.Api.Domain.Users;
-using Baltaio.Location.Api.Infrastructure.Users.Authentication;
+using Baltaio.Location.Api.Infrastructure.Authentication;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using NSubstitute;

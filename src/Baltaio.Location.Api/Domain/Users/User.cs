@@ -4,12 +4,13 @@ public sealed class User
 {
     private User(string email, string password)
     {
-        Id = Guid.NewGuid();
+        Code = Guid.NewGuid();
         Email = email;
         Password = password;
     }
+    private User() {}
 
-    public Guid Id { get; init;  }
+    public Guid Code { get; init;  }
     public string Email { get; private set; }
     public string Password { get; private set; }
 

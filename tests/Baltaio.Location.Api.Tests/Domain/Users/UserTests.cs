@@ -24,7 +24,7 @@ public class UserTests
 
         // Assert
         user.Should().NotBeNull();
-        user.Id.Should().NotBeEmpty();
+        user.Code.Should().NotBeEmpty();
         user.Email.Should().Be(email);
         user.Password.Should().NotBe(password);
     }

@@ -2,7 +2,7 @@
 using Baltaio.Location.Api.Domain;
 using SpreadsheetLight;
 
-namespace Baltaio.Location.Api.Infrastructure
+namespace Baltaio.Location.Api.Infrastructure.Persistance.Repositories
 {
     public class FileRepository : IFileRepository
     {
@@ -31,7 +31,8 @@ namespace Baltaio.Location.Api.Infrastructure
                     (
                         document.GetCellValueAsInt32($"A{i}"),
                         document.GetCellValueAsString($"B{i}"),
-                        document.GetCellValueAsString($"C{i}")
+                        //int.Parse(document.GetCellValueAsString($"C{i}")),
+                        null
                     )
                 );
             }

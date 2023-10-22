@@ -3,16 +3,19 @@ using Baltaio.Location.Api.Application.Addresses.CreateAddress;
 using Baltaio.Location.Api.Domain;
 using FluentAssertions;
 using NSubstitute;
+using System.Runtime.CompilerServices;
 
 namespace Baltaio.Location.Api.Tests.Application.Addresses;
 
 public class CreateAddressAppServiceTests
 {
     private readonly ICityRepository _cityRepositoryMock;
+    private readonly IStateRepository _staterepository;
 
     public CreateAddressAppServiceTests()
     {
         _cityRepositoryMock = Substitute.For<ICityRepository>();
+        _staterepository = Substitute.For<IStateRepository>();
     }
 
     [Fact(DisplayName = "Deve retornar mensagem de erro se código do IBGE não existir.")]
@@ -26,7 +29,7 @@ public class CreateAddressAppServiceTests
         _cityRepositoryMock
             .GetAsync(ibgeCode)
             .Returns((City?)null);
-        CreateCityAppService service = new(_cityRepositoryMock);
+        CreateCityAppService service = new(_cityRepositoryMock, _staterepository);
 
         //Act
         CreateCityOutput result = await service.ExecuteAsync(input);
@@ -45,8 +48,8 @@ public class CreateAddressAppServiceTests
         CreateCityInput input = new(ibgeCode, nameCity, stateCode);
         _cityRepositoryMock
             .GetAsync(ibgeCode)
-            .Returns(new City(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>()));
-        CreateCityAppService service = new(_cityRepositoryMock);
+            .Returns(new City(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<State>()));
+        CreateCityAppService service = new(_cityRepositoryMock, _staterepository);
 
         //Act
         CreateCityOutput result = await service.ExecuteAsync(input);

@@ -9,7 +9,7 @@ Accept-Charset: utf-8
   "password": "SenhaVálida123"
 }
 ###
-POST https://localhost:7033/api/auth/login
+POST https://localhost:7033/api/v1/auth/login
 Content-Type: application/json
 Accept-Charset: utf-8
 
@@ -17,14 +17,15 @@ Accept-Charset: utf-8
   "email": "joao.silva@example.com",
   "password": "SenhaVálida123"
 }
-
-###
-POST https://localhost:7033/api/v3/locations
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImU2YjhlMTA5LTI4MGMtNDY0Ni1hM2YxLTIwNmQ4MjdjZjYwOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5NzkxNDgxMywiZXhwIjoxNjk4MzQ2ODEzLCJpYXQiOjE2OTc5MTQ4MTMsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.78Ddf5hUoCrmrPMIq3Tzq1SsPV5vX_NVPKBcvHHWO50
-
 ###
 POST https://localhost:7033/api/v1/locations
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImU2YjhlMTA5LTI4MGMtNDY0Ni1hM2YxLTIwNmQ4MjdjZjYwOSIsImVtYWlsIjoiam9hby5zaWx2YUBleGFtcGxlLmNvbSIsIm5iZiI6MTY5NzkxNDgxMywiZXhwIjoxNjk4MzQ2ODEzLCJpYXQiOjE2OTc5MTQ4MTMsImlzcyI6IkJhbHRhaW8uRmlyc3RDaGFsbGVuZ2UiLCJhdWQiOiJCYWx0YWlvLkZpcnN0Q2hhbGxlbmdlIn0.78Ddf5hUoCrmrPMIq3Tzq1SsPV5vX_NVPKBcvHHWO50
+
+{
+  IbgeCode: 123456,
+  Name: "São Paulo",
+  StateCode: "30"
+}
 
 ###
 POST https://localhost:7033/api/v1.1/locations
