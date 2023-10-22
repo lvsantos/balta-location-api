@@ -6,7 +6,7 @@ namespace Baltaio.Location.Api.Infrastructure.Persistance.Repositories
 {
     public class FileRepository : IFileRepository
     {
-        public List<City> GetCities(Stream source)
+        public List<City> GetCities(Stream source, List<State> states)
         {
             SLDocument document;
             List<City> cities = new();
@@ -26,13 +26,17 @@ namespace Baltaio.Location.Api.Infrastructure.Persistance.Repositories
             const int firstDataRow = 2;
             for (int i = firstDataRow; document.HasCellValue($"A{i}"); i++)
             {
+                var state = states.Find((s) => s.Code == document.GetCellValueAsInt32($"C{i}"));
+
+                if (state == null)
+                    continue;
+
                 cities.Add(
                     new City
                     (
                         document.GetCellValueAsInt32($"A{i}"),
                         document.GetCellValueAsString($"B{i}"),
-                        //int.Parse(document.GetCellValueAsString($"C{i}")),
-                        null
+                        state
                     )
                 );
             }
