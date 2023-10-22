@@ -13,11 +13,11 @@ internal class GetCityAppService : IGetCityAppService
         _cityRepository = cityRepository;
     }
    
-    public async Task<GetCityOutput> ExecuteAsync(int id)
+    public async Task<GetCityOutput> ExecuteAsync(GetCityInput input)
     {
-        City? city = await _cityRepository.GetWithState(id);
+        City? city = await _cityRepository.GetWithState(input.Code);
 
-        if (city is null)
+        if (city is null || city.IsRemoved)
             return GetCityOutput.Validation();
 
         return GetCityOutput.Success(city);

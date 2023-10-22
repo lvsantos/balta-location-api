@@ -231,8 +231,9 @@ async Task<IResult> CreateCity(CreateCityRequest request)
 }
 async Task<IResult> GetCity(int id)
 {
+    GetCityInput input = new(id);
     var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IGetCityAppService>();
-    GetCityOutput output = await service.ExecuteAsync(id);
+    GetCityOutput output = await service.ExecuteAsync(input);
 
     if (output.IsValid == false)
     {

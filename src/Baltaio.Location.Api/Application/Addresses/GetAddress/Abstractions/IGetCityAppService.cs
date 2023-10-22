@@ -2,5 +2,5 @@
 
 public interface IGetCityAppService
 {
-    Task<GetCityOutput> ExecuteAsync(int id);
+    Task<GetCityOutput> ExecuteAsync(GetCityInput input);
 }
