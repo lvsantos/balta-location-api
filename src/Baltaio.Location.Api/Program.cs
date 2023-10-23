@@ -148,7 +148,7 @@ var app = builder.Build();
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0))
         .WithName(nameof(GetCity));
-    app.MapPut("api/v{version:apiVersion}/locations/{id}", ([FromBody] UpdateCityRequest request) => UpdateCityAsync(request))
+    app.MapPut("api/v{version:apiVersion}/locations/{id}", ([FromRoute] int id, [FromBody] UpdateCityRequest request) => UpdateCityAsync(id, request))
         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
@@ -157,11 +157,11 @@ var app = builder.Build();
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
     app.MapGet("api/v{version:apiVersion}/locations", (string? cityName, string? stateName) => GetAllAsync(cityName, stateName))
-         //.RequireAuthorization()
+         .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
     app.MapPost("api/v{version:apiVersion}/locations/import-data", (IFormFile file) => ImportData(file))
-        //.RequireAuthorization()
+        .RequireAuthorization()
         .WithApiVersionSet(versionSet)
         .MapToApiVersion(new ApiVersion(majorVersion: 1, minorVersion: 0));
 
@@ -226,7 +226,7 @@ async Task<IResult> LoginAsync(LoginRequest request)
 }
 async Task<IResult> CreateCity(CreateCityRequest request)
 {
-    CreateCityInput input = new(request.IbgeCode, request.NameCity, request.StateCode);
+    CreateCityInput input = new(request.IbgeCode, request.Name, request.StateCode);
     var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<ICreateCityAppService>();
 
     CreateCityOutput output = await service.ExecuteAsync(input);
@@ -252,9 +252,9 @@ async Task<IResult> GetCity(int id)
     var getCityResponse = GetCityResponse.Create(output);
     return Results.Ok(getCityResponse);
 }
-async Task<IResult> UpdateCityAsync(UpdateCityRequest request)
+async Task<IResult> UpdateCityAsync(int id, UpdateCityRequest request)
 {
-    UpdateCityInput input = request.ToInput();
+    UpdateCityInput input = request.ToInput(id);
     var service = app.Services.CreateScope().ServiceProvider.GetRequiredService<IUpdateCityAppService>();
 
     UpdateCityOutput output = await service.ExecuteAsync(input);
