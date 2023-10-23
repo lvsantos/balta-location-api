@@ -22,3 +22,13 @@ Deve-se criar um CRUD de Localidade, contendo os seguintes campos: Código IBGE,
   <img src="assets/Location.jpg" alt="drawing" width="700px"/>
 
   <img src="assets/CleanArch.jpg" alt="drawing" width="700px"/>
+
+  # Bibliotecas utilizadas
+
+  * Versionamento: aspnet-api-versioning
+  * Hash: BCrypt
+  * Validações: Flunt
+  * Autenticação: Bearer JWT
+  * Documentação: Swager
+  * Leitura do excel: SpreadsheetLight
+  * Mocks: NSubstitute
