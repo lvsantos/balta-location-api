@@ -1,7 +1,6 @@
 ﻿using Baltaio.Location.Api.Application.Addresses.Commons;
 using Baltaio.Location.Api.Domain;
 using Microsoft.EntityFrameworkCore;
-using System.Net.WebSockets;
 
 namespace Baltaio.Location.Api.Infrastructure.Persistance.Repositories;
 
@@ -38,17 +37,7 @@ internal class CityRepository : ICityRepository
             query = query.Where(c => c.State.Name == stateName);
         }
 
-        return query.ToList();
-    }
-
-    public Task<City?> GetAsync(string cityName)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<City?> GetByStateAsync(string stateAbbreviation)
-    {
-        throw new NotImplementedException();
+        return await query.ToListAsync();
     }
 
     public async Task SaveAsync(City city, CancellationToken cancellationToken = default)
@@ -66,10 +55,5 @@ internal class CityRepository : ICityRepository
             .Include(c => c.State)
             .FirstOrDefaultAsync(c => c.Code == cityCode);
         return city;
-    }
-
-    public void Update(City city, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
     }
 }
