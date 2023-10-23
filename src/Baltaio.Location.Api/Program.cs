@@ -53,7 +53,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<IFileRepository, FileRepository>();
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddDbContext<ApplicationDbContext>(
-        options => options.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Balta.io.Location;Trusted_Connection=True;MultipleActiveResultSets=true"));
+        options => options.UseSqlServer(@"Server=balta-location-challenge-db.database.windows.net;User ID=adminjordao;Password=#123jordao;TrustServerCertificate=True"));
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
