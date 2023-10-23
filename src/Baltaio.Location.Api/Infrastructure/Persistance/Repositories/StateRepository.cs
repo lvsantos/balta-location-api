@@ -19,14 +19,14 @@ public class StateRepository : IStateRepository
         await _context.SaveChangesAsync();
     }
 
-    public Task<List<State>?> GetAllAsync()
+    public async Task<List<State>?> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return await _context.States.ToListAsync();
     }
 
     public async Task<State?> GetAsync(int stateCode, CancellationToken cancellationToken = default)
     {
-        State ? state = await _context.States.FindAsync(stateCode, cancellationToken);
+        State? state = await _context.States.FindAsync(stateCode, cancellationToken);
         return state;
     }
 }
