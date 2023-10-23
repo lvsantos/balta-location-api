@@ -2,7 +2,7 @@
 
 namespace Baltaio.Location.Api.Contracts.Cities;
 
-public record UpdateCityRequest(int IbgeCode, string Name, int StateCode)
+public record UpdateCityRequest(string Name, int StateCode)
 {
-    internal UpdateCityInput ToInput() => new(IbgeCode, Name, StateCode);
+    internal UpdateCityInput ToInput(int id) => new(id, Name, StateCode);
 }
